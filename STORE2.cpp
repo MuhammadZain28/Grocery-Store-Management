@@ -1684,7 +1684,7 @@ bool customerDelete(string arr1[], string arr2[], double arr3[], string edit, in
         cin >> flag;
         if (flag == 1)
         {
-            arr1[userSearchIndex] = "N/A" ;
+            arr1[index] = "N/A" ;
             cout << "            -------------------------------------Customer Data Deleted.-------------------------------------" << endl;
             return true;
         }

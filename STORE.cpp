@@ -1089,11 +1089,11 @@ int main()
         }
     }
     
-    
+
     saveProducts(grocery,snacks,other,rebate,psize);
-    saveUser(customer,detail,psize);
-    saveCart(item,psize);
-    saveSales(income);
+    saveUser(customer,detail,psize);                      
+    saveCart(item,psize);                                 
+    saveSales(income);                                            
     return 0;
 }
 
@@ -1782,7 +1782,7 @@ bool customerDelete(user customer[], string del, int size)
         cin >> flag;
         if (flag == 1)
         {
-            customer[userSearchIndex].username = "N/A" ;
+            customer[index].username = "N/A" ;
             cout << "            -------------------------------------Customer Data Deleted.-------------------------------------" << endl;
             return true;
         }
