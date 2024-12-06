@@ -10,147 +10,134 @@
 using namespace std;
 
 int const psize = 100;                 // Total No Of Products can be added
-int const cartSize = 50;               // Total No Of Products can be added in customer cart
-int const dsize = 15;                  // Total No of Discounts Can be added
-
-struct user
-{
-    string username;                   // For username & passwords 
-    string password;
-    string bank;                       // Bank account of user
-    double balance;                    // balance added in card
-    double usedBalance;                // total balance used
-};
-
-struct discount
-{
-    double discountCoupons;           
-    double discountPercentage;         // discount criteria
-    double maxDiscount;
-};
-
-struct product
-{
-    string product;
-    double cost;
-    double sale;
-    int quantity;
-};
-
-struct cart
-{
-    string cart[cartSize];              // product in customer cart
-    int quantity[cartSize];         // quatity & price of product
-    int price[cartSize];
-};
-
-struct employee
-{
-    string employee;              // for employees name
-    double salary;                // their salaries
-};
-
-struct sales
-{
-    double totalOfMonth[12];
-    double saleOfMonth[12];
-    int sale[31];                        // store day wise sales
-};
 
 bool validation(int input);                                                                     // check input validation
 void inputDate(string date);                                                                    // input date from user
 string hidePassword();
 
 bool logIn(string x, string name, string y, string key);                                        //for admin and employee log in
-bool signUp(user customer[], int size);                                                         // sign up as user
-bool signIn(string x, string y, user customer[]);                                               // sign in 
+void signUp(string name[], string pass[], string bank[], double balance[], int size);           // sign up as user
+bool signIn(string x, string y);                                                                // sign in 
 
-double sort(discount rebate[], int size);                                                       // sort discount list to apply right discount
+double sort(double arr1[], double arr2[],double arr3[], int size);                              // sort discount list to apply right discount
 
 void initialize(string arr[], int size, string value);                                          // initialize string array
-void initializeProduct(product arr[], int size, string value);                                  // initialize string array
-void initializeUser(user arr[], int size, string value);                                        // initialize string array
-void initializeCart(cart item[], int size, int lenght, string value);                           // intialize 2D array
-void initializeDouble(double arr[], int size, double value);                                    // double arr
-void initializeDiscount(discount arr[], int size, double value);                                    
-void initializeEmployee(employee arr[], int size, string value);
+void assigning(string arr[][50], int size, int lenght, string value);                           // intialize 2D array
+void initializeDouble(double arr[], int size, double value);                                    // double array
 
+double addProduct(string arr1[], int arr2[], int arr3[], int arr4[], int size);                 // take products from admin
+void addEmployee(string arr1[], double arr2[], int size);                                       // admin add employees 
+void addCart(string products[][50], int Cartquantity[][50],int price[][50], int size);          // add products in user cart
 
-double addProduct(product item[], int size);                                                    // take products from admin
-void addEmployee(employee detail[], int size);                                                  // admin add employees 
-void addCart(cart item[], product grocery[], product snacks[], product other[], int size);      // add products in user cart
+void displayList(string arr1[], int sale[], int cost[], int stock[], int size);                 // display list of products
+void discountList(double arr1[], double arr2[], int size);                                      // display list of discounts
+void customerList(string arr1[], string arr2[], double arr3[], int size);                       // display list of customers
+void employeeList(string arr1[], double arr2[], int size);                                      // display list of employees
+void cartList(string product[][50], int quantity[][50],int price[][50], int size);              // display list of products in cart
+void displayListToCustomer(string arr1[], int sale[], int stock[], int size);                   // display list of products to customer
 
-void displayList(product item[], int size);                                                     // display list of products
-void discountList(discount rebate[], int size);                                                 // display list of discounts
-void customerList(user customer[], int size);                                                   // display list of customers
-void employeeList(employee detail[], int size);                                                 // display list of employees
-void cartList(cart item[], int size);                                                           // display list of products in cart
-void displayListToCustomer(product item[], int size);                                           // display list of products to customer
+void generateBill(string product[][50], int quantity[][50], int price[][50], int size);         // generate Bill of items in cart
 
-// generate Bill of items in cart
-void generateBill(cart item[], product grocery[], product snacks[], product other[], user customer[], discount rebate[], sales income, int size);         
+bool productEdit(string arr1[], int arr2[], int arr3[], int arr4[], string edit, int size);     // Admin edits products added 
 
-bool productEdit(product item[], string edit, sales income, int size);                          // Admin edits products added 
+bool searchProduct(string arr1[], int arr2[], int arr3[], string edit, int size);               // search of product
+bool searchCustomer(string arr1[], string arr2[], double arr3[], string edit, int size);        // search of customers
 
-bool searchProduct(product item[], string search, int size);                                    // search of product
-bool searchCustomer(user customer[], string search, int size);                                  // search of customers
+bool productDelete(string item[], int price[], int stock[], int costPrice[], string edit, int size);   //     *********************************
+bool discountDelete(double arr1[], double edit, int size);                                             //
+bool employeeDelete(string arr1[], string edit, int size);                                             //      DELETE RESPECTIVE NAME ELEMENTS
+bool customerDelete(string arr1[], string arr2[], double arr3[], string edit, int size);               //
+bool cartDelete(string product[][50], int quantity[][50], string del, int size);                       //     **********************************                             
 
-bool productDelete(product item[],sales income, string edit, int size);                         //     *********************************
-bool discountDelete(discount rebate[], double del, int size);                                   //
-bool employeeDelete(employee detail[], string del, int size);                                   //      DELETE RESPECTIVE NAME ELEMENTS
-bool customerDelete(user customer[], string del, int size);                                     //
-bool cartDelete(cart item[], product grocery[], product snacks[],                               //
-                product other[], string del, int size);                                         //     **********************************                             
+void compareSales(int sale[]);                                                                         // Graphically compare sales on daily basis      
+double totalSales(int sale[]);                                                                         // Total sales of Month
 
-void compareSales(int sale[]);                                                                  // Graphically compare sales on daily basis      
-double totalSales(int sale[]);                                                                  // Total sales of Month
+double applyDiscount(int bill, double criteria[], double percentage[],double maxDiscount[], int size);   // suitable Discounts on Purchase
+void removeStock(int quantity[][50], int find[][2], int index, int size);                              // Remove  Purchased quantity from product stock
+void plusStock(int quantity[][50], int find[][2], int index, int size);                                            // Add quantity back in stock which is deleted from cart 
+void rechargeCard(string name[], string password[], string bank[], double balance[], int size);        // recharge balance in store card
 
-double applyDiscount(int bill, discount rebate[], int size);                                    // suitable Discounts on Purchase
-// Remove  Purchased quantity from product stock
+void validateDate(string date);                                                                        //validate and store date month
+bool productValidation(int sale,int cost,int quantity);                                                //validate Product cost , sale, stock
+bool stringValidation(string input);                                               
+double profitLoss(double purchase, double sales);                                                      // Profit and Loss Percentsge Calculation
+void graph(double month[]);                                                                            // Graphically shows sales of month
+void setCoord(int x, int y);                                                                           // Set coordinates of graph
 
-void removeStock(cart item[], product grocery[], product snacks[], product other[], int find[][2], int index, int size);   
-// Add deleted quantity from product stock
-
-void plusStock(cart item[], product grocery[], product snacks[], product other[], int find[][2], int index, int size);
- 
-void rechargeCard(user customer[], int size);                                               // recharge balance in store card
-
-void validateDate(string date,sales income);                                                //validate and store date month
-bool productValidation(int sale,int cost,int quantity);                                     //validate Product cost , sale, stock
-bool stringValidation(string input);                                    
-double profitLoss(double purchase, double sales);                                           // Profit and Loss Percentsge Calculation
-void graph(double month[]);                                                                 // Graphically shows sales of month
-void setCoord(int x, int y);                                                                // Set coordinates of graph
-
-bool searchUser(string name, user customer[], int size, int index);                         // check that same username exist or not
+bool searchUser(string user, int size, int index);                                                     // check that same username exist or not
 void upper(string& name);
+// *****************************************************************************************************************************************************
 
+void tokenizer(string token,string (&product)[psize], int (&cost)[psize], int (&sale)[psize], int (&stock)[psize],int index);
+bool loadProducts(string (&product)[psize], int (&cost)[psize], int (&sale)[psize], int (&stock)[psize], int size);
+bool saveProducts(string (&product)[psize], int (&cost)[psize], int (&sale)[psize], int (&stock)[psize], int size);
+void loadUser(string (&username)[psize],string (&passkey)[psize],string (&bank)[psize],double (&balance)[psize],double (&usedBalance)[psize]);
+void saveUser(string (&username)[psize],string (&passkey)[psize],string (&bank)[psize],double (&balance)[psize],double (&usedBalance)[psize],int size);
+void loadCart(string (&cart)[psize][50],int (&quantity)[psize][50],int (&price)[psize][50]);
+void saveCart(string (&cart)[psize][50],int (&quantity)[psize][50],int (&price)[psize][50],int size);
+void loadSales(int (&sale)[31],double (&saleOfMonth)[12],double (&totalOfMonth)[12]);
+void saveSales(int (&sale)[31],double (&saleOfMonth)[12],double (&totalOfMonth)[12]);
+int stringToInt(string word);
 
-// **********************************************************************************************************
-
-void tokenizer(string token,product item[],int index);
-bool loadProducts(product grocery[], product snacks[], product other[], discount rebate[], int size);
-bool saveProducts(product grocery[], product snacks[], product other[], discount rebate[], int size);
-void loadUser(user customer[], employee detail[]);
-void saveUser(user customer[], employee detail[], int size);
-void loadCart(cart item[]);
-void saveCart(cart item[],int size);
-void loadSales(sales income);
-void saveSales(sales income);
-
-// ***********************************************************************************************************
+// *****************************************************************************************************************************************************
 //                                 Functions to load and Store Data in files
 
-int stringToInt(string word);          // convert string to int
 
+int const cartSize = 50;               // Total No Of Products can be added in customer cart
+const int dsize = 15;                  // Total No of Discounts Can be added
+            
 int userSearchIndex = 0;               // Searches user in user name array
-int index = 0;                         // Searches Product & its stock                 
+int index = 0;                         // Searches Product & its stock
+
+string username[psize];            
+string passkey[psize];                 // For username & passwords 
 
 bool flag1[psize];                     // Check for whether element exist or not
 
+string snacks[psize];
+string grocery[psize];
+string product[psize];                 // products other than above both
+
+                                       
+// S for snack ,G for grocery ,O for other products
+
+// cost price, sale price, & stock
+int Sprice[psize];
+int Sstock[psize];
+int ScostPrice[psize];
+
+// cost price, sale price, & stock
+int Gprice[psize];
+int Gstock[psize];
+int GcostPrice[psize];
+
+// cost price, sale price, & stock
+int Oprice[psize];
+int Ostock[psize];
+int OcostPrice[psize];
+
+string bank[psize];                  // Bank account of user
+double balance[psize];               // balance added in card
+double usedBalance[psize];           // total balance used 
+ 
+string employee[psize];              // for employees name
+double salary[psize];                // their salaries
+ 
+string cart[psize][50];              // product in customer cart
+int cartQuantity[psize][50];         // quatity & price of product
+int cartPrice[psize][50];
+ 
+double discountCoupons[dsize];       // discount criteria
+double discountPercentage[dsize];
+double maxDiscount[dsize];
+
 int productFind[cartSize][2];        // store product index and its existence in array
 
+int sale[31];                        // store day wise sales
 double total = 0;                    // total for bill
+
+double totalOfMonth[12] = {0};
+double saleOfMonth[12] = {0};
 
 string date = "01-01-2024";
 int day = 0;
@@ -159,23 +146,9 @@ int year = 2024;
 
 int main()
 {
-    product grocery[psize];         // Name, cost price, sale price, & stock
-    product snacks[psize];
-    product other[psize];
-
-    cart item[psize];
-
-    user customer[psize];
-
-    discount rebate[dsize];
-
-    employee detail[psize];
-
-    sales income;
-
-    int choice = 0;                 // choice in main menu
-    int input = 0;                  // choice in sub menu
-    int Pchoice = 0;                // choice in menu inside sub menu
+    int choice = 0;     // choice in main menu
+    int input = 0;      // choice in sub menu
+    int Pchoice = 0;    // choice in menu inside sub menu
 
     string user = "N/A";    
     string key = "N/A";
@@ -191,21 +164,21 @@ int main()
     string queries[5];
 
 
-
-    initializeCart(item, cartSize,psize,"N/A");        //
-    initializeUser(customer,psize,"N/A");              //
-    initializeProduct(grocery,psize,"N/A");            //
-    initializeProduct(snacks,psize,"N/A");             //
-    initializeProduct(other,psize,"N/A");              //              intialization of array
-    initializeDiscount(rebate,dsize,0);                //
-    initializeEmployee(detail,psize,"N/A");            //
+    assigning(cart, cartSize,psize,"N/A");             //
+    initialize(username,psize,"N/A");                  //
+    initialize(grocery,psize,"N/A");                   //
+    initialize(snacks,psize,"N/A");                    //
+    initialize(product,psize,"N/A");                   //              intialization of array
+    initializeDouble(discountCoupons,dsize,0);         //
+    initializeDouble(discountPercentage,dsize,0);      //
+    initialize(employee,psize,"N/A");                  //
     initialize(queries,5,"N/A");                       //
 
     
-    loadProducts(grocery,snacks,other,rebate,psize);
-    loadUser(customer,detail);
-    loadCart(item);
-    loadSales(income);
+    loadProducts(grocery,GcostPrice,Gprice,Gstock,psize);
+    loadUser(username,passkey,bank,balance,usedBalance);
+    loadCart(cart,cartQuantity,cartPrice);
+    loadSales(sale,saleOfMonth,totalOfMonth);
 
     while(mainLoopFlag == false)
     {
@@ -242,8 +215,8 @@ int main()
         if (choice == 1)        // log in as admin
         {
             if (logIn(user,"Admin",key,"1234"))
-            {             
-                while (Aflag == false)
+            {
+                        while (Aflag == false)
                 {
                     system("cls");
                     cout << "****************************************************************************************************************************************************************************" << endl;                                                
@@ -306,19 +279,18 @@ int main()
 
                             if (Pchoice == 1)
                             {
-                                income.totalOfMonth[month] += addProduct(grocery,psize);  //
+                                totalOfMonth[month] += addProduct(grocery,Gprice,GcostPrice,Gstock,psize);  //
                             }
 
                             else if (Pchoice == 2)
                             {
-                                income.totalOfMonth[month] += addProduct(snacks,psize);   //      Total Add in month
+                                totalOfMonth[month] += addProduct(snacks,Sprice,ScostPrice,Sstock,psize);   //      Total Add in month
                             }
 
                             else if (Pchoice == 3)
                             {
-                                income.totalOfMonth[month] += addProduct(other,psize);  //
+                                totalOfMonth[month] += addProduct(product,Oprice,OcostPrice,Ostock,psize);  //
                             }
-
                             else
                             {
                                 cout << "            -----------------------------------------Invalid Input !-----------------------------------------" <<endl;
@@ -345,26 +317,22 @@ int main()
 
                         if (editFlag == false)
                         {
-                            editFlag = productEdit(grocery, edit, income, psize);             // if product is not find in 1 array then it goes to next
+                            editFlag = productEdit(grocery, Gprice, Gstock,GcostPrice, edit, psize);             // if product is not find in 1 array then it goes to next
                         }
-
                         if (editFlag == false)
                         {
-                            editFlag = productEdit(snacks, edit, income, psize);
+                            editFlag = productEdit(snacks, Sprice, Sstock,ScostPrice, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
-                            editFlag = productEdit(other, edit, income, psize);
+                            editFlag = productEdit(product, Oprice, Ostock,OcostPrice, edit, psize);
                         }
-
                         else if (editFlag == false)
-                        {  
+                        {
                             cout <<endl << endl;
                             cout << "    -------------------------------------Unable to Find Product------------------------------------- ";
                             cout <<endl << endl;
                         }
-
                         else
                         {
                             cout <<endl << endl;
@@ -388,19 +356,16 @@ int main()
 
                         if (editFlag == false)
                         {
-                            editFlag = productDelete(grocery, income, edit, psize);
+                            editFlag = productDelete(grocery, Gprice, Gstock,GcostPrice, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
-                            editFlag = productDelete(snacks, income, edit, psize);
+                            editFlag = productDelete(snacks, Sprice, Sstock,ScostPrice, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
-                            editFlag = productDelete(other, income, edit, psize);
+                            editFlag = productDelete(product, Oprice, Ostock,OcostPrice, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
                             cout <<endl << endl;
@@ -417,13 +382,13 @@ int main()
                         cout << "*********************************************************************************************************************************" << endl <<endl;
                         cout << "                                                             Grocery Items                                                            \n";
                         cout << endl;
-                        displayList(grocery,psize);
+                        displayList(grocery,Gprice,GcostPrice,Gstock,psize);
                         cout << "                                                                 Snacks                                                               \n";
                         cout << endl;
-                        displayList(snacks,psize);
+                        displayList(snacks,Sprice,ScostPrice,Sstock,psize);
                         cout << "                                                             Other Products                                                           \n";
                         cout << endl;
-                        displayList(other,psize);
+                        displayList(product,Oprice,OcostPrice,Ostock,psize);
                         getch();
                     }
                     
@@ -442,23 +407,19 @@ int main()
                             getline(cin, edit);
                         }
                         while(stringValidation(edit));
-                        upper(edit);
 
                         if (editFlag == false)
                         {
-                            editFlag = searchProduct(grocery, edit, psize);
+                            editFlag = searchProduct(grocery, Gprice, Gstock, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
-                            editFlag = searchProduct(snacks, edit, psize);
+                            editFlag = searchProduct(snacks, Sprice, Sstock, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
-                            editFlag = searchProduct(other, edit, psize);
+                            editFlag = searchProduct(product, Oprice, Ostock, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
                             cout <<endl << endl;
@@ -482,18 +443,18 @@ int main()
                             for (int i = 0; i < dsize; i++)
                             {
                                 flag = true;
-                                if(rebate[i].discountCoupons == 0)
+                                if(discountCoupons[i] == 0)
                                 {
                                     do
                                     {
                                         cout << "                            Enter Min Limit for Discount     : ";
-                                        cin >> rebate[i].discountCoupons;
+                                        cin >> discountCoupons[i];
                                         cout << "                            Enter Discount Percentage        : ";
-                                        cin >> rebate[i].discountPercentage;
+                                        cin >> discountPercentage[i];
                                         cout << "                            Enter Maximum Discount on Coupon : ";
-                                        cin >> rebate[i].maxDiscount;
+                                        cin >> maxDiscount[i];
                                     } 
-                                    while (productValidation(rebate[i].discountCoupons,rebate[i].discountPercentage,rebate[i].maxDiscount));
+                                    while (productValidation(discountCoupons[i],discountPercentage[i],maxDiscount[i]));
 
                                     flag = false;
                                     break;
@@ -508,7 +469,7 @@ int main()
                                 cout << "       ----------------------------------Unsufficient Storage---------------------------------- ";
                                 cout <<endl << endl;
                             }
-                            sort(rebate,dsize);
+                            sort(discountCoupons,discountPercentage,maxDiscount,dsize);
                             cout << "                  Enter '0' for exit :   ";
                             control = getch();
                             
@@ -522,9 +483,9 @@ int main()
                         cout << "***************************************************************************************************************************" << endl;
                         cout << "                                                    Discounts List                                                       \n";
                         cout << "***************************************************************************************************************************" << endl <<endl;
-                        cout <<  "         " << setw(30) << "Sr.no" << setw(30) << "Coupon Name" << setw(30) << "Discount Percentage" << "Maximum Discount" <<endl;
+                        cout <<  "         " << setw(30) << "Sr.no" << setw(30) << "Coupon Name" << setw(30) << "Discount Percentage" <<endl;
                         cout << endl;
-                        discountList(rebate,dsize);
+                        discountList(discountCoupons,discountPercentage,dsize);
                         getch();
                     }
 
@@ -539,7 +500,7 @@ int main()
                         cout << "                    Enter Discount Coupon You Want to Delete : ";
                         cin >> del; 
 
-                        discountDelete(rebate,del,dsize);
+                        discountDelete(discountCoupons,del,dsize);
                         getch();
                     }
 
@@ -552,7 +513,7 @@ int main()
                             cout << "                                                 Add a Employee                                                          \n";
                             cout << "***************************************************************************************************************************" << endl;
                             cout << endl;
-                            addEmployee(detail, psize);
+                            addEmployee(employee, salary, psize);
                             cout << "                  Enter '0' for exit :   ";
                             control = getch();
                         } 
@@ -566,7 +527,7 @@ int main()
                         cout << "         " << setw(20) << "Sr.no" << setw(50) <<"Employee Name" << setw(30) << "Salary" <<endl;
                         cout << "***************************************************************************************************************************" << endl <<endl;
 
-                        employeeList(detail, psize);
+                        employeeList(employee, salary, psize);
                         getch();
                     }
 
@@ -580,15 +541,15 @@ int main()
                         cout << "                    Enter Employee Name You Want to Delete : ";
                         getline(cin, edit); 
 
-                        employeeDelete(detail,edit,psize);
+                        employeeDelete(employee,edit,dsize);
                         getch();
                     }
 
                     else if (input == 12)
                     {
-                        income.saleOfMonth[month] = totalSales(income.sale);  // calculate total sales of month
-                        graph(income.saleOfMonth);                            // graphically shows sale on monthly basis
-                        compareSales(income.sale);                            // graphically shows sale on daily basis
+                        saleOfMonth[month] = totalSales(sale);  // calculate total sales of month
+                        graph(saleOfMonth);                     // graphically shows sale on monthly basis
+                        compareSales(sale);                     // graphically shows sale on daily basis
                         getch();
                     }
 
@@ -600,21 +561,21 @@ int main()
                         cout << "                                            Profit and Loss Percentage                                              \n";
                         cout << "***************************************************************************************************************************" << endl;
                         cout << endl;
-                        income.saleOfMonth[month] = totalSales(income.sale);
-                        cout << "         T O T A L   P U R C H A S E   :    " << income.totalOfMonth[month] << endl << endl;
-                        cout << "         T O T A L   S A L E S         :    " << income.saleOfMonth[month] << endl << endl;
+                        saleOfMonth[month] = totalSales(sale);
+                        cout << "         T O T A L   P U R C H A S E   :    " << totalOfMonth[month] << endl << endl;
+                        cout << "         T O T A L   S A L E S         :    " << saleOfMonth[month] << endl << endl;
 
-                        if ( income.totalOfMonth[month] > 0)  // shows profit or loss
+                        if ( totalOfMonth[month] > 0)  // shows profit or loss
                         {
-                            profitPercentage = profitLoss(income.totalOfMonth[month],income.saleOfMonth[month]);
+                            profitPercentage = profitLoss(totalOfMonth[month],saleOfMonth[month]);
                             if (profitPercentage > 0)
                             {
-                                cout << "         P R O F I T   O F   M O N T H        :    " << income.saleOfMonth[month] - income.totalOfMonth[month] << endl << endl;
+                                cout << "         P R O F I T   O F   M O N T H        :    " << saleOfMonth[month] - totalOfMonth[month] << endl << endl;
                                 cout << "         P R O F I T   P E R C E N T A G E    :    " << profitPercentage << " % " << endl;
                             }
                             else
                             {
-                                cout << "         L O S S   O F   M O N T H            :    " << income.totalOfMonth[month] - income.saleOfMonth[month] << endl << endl;
+                                cout << "         L O S S   O F   M O N T H            :    " << totalOfMonth[month] - saleOfMonth[month] << endl << endl;
                                 cout << "         L O S S   P E R C E N T A G E        :    " << profitPercentage << " % " << endl;
                             }
                         }
@@ -660,14 +621,15 @@ int main()
                         getch();
                     }
                 }
-            }
+        
+            }    
         }
     
         else if (choice == 2)  // log in as employee
         {
             if (logIn(user,"Employee",key,"1234"))
             {
-                while (Eflag == false)
+                        while (Eflag == false)
                 {
                     system("cls");
                     cout << "****************************************************************************************************************************************************************************" << endl;                                                
@@ -709,13 +671,13 @@ int main()
                         cout << "***********************************************************************************************************************************" << endl <<endl;
                         cout << "                                                             Grocery Items                                                            \n";
                         cout << endl;
-                        displayList(grocery,psize);
+                        displayList(grocery,Gprice,GcostPrice,Gstock,psize);
                         cout << "                                                                 Snacks                                                               \n";
                         cout << endl;
-                        displayList(snacks,psize);
+                        displayList(snacks,Sprice,ScostPrice,Sstock,psize);
                         cout << "                                                             Other Products                                                           \n";
                         cout << endl;
-                        displayList(other,psize);
+                        displayList(product,Oprice,OcostPrice,Ostock,psize);
                         getch();
                     }
                     
@@ -726,7 +688,7 @@ int main()
                         cout << "         " << setw(30) << "Sr.no" << setw(30) <<"Customer Name" << setw(30) <<"Account No." << setw(30) <<"Balance" <<endl;
                         cout << "***************************************************************************************************************************" << endl <<endl;
                         
-                        customerList(customer,psize);
+                        customerList(username,bank,balance,psize);
                         getch();
                     }
 
@@ -743,7 +705,7 @@ int main()
 
                         if (editFlag == false)                                                        // search whether customer is exist or not
                         {
-                            editFlag = searchCustomer(customer, edit, psize);
+                            editFlag = searchCustomer(username, bank, balance, edit, psize);
                         }
                         if (editFlag == false)
                         {
@@ -767,13 +729,13 @@ int main()
 
                         if (editFlag == false)
                         {
-                            editFlag = customerDelete(customer, edit, psize);
+                            editFlag = customerDelete(username, bank, balance, edit, psize);
                         }
                         if (editFlag == false)
                         {
                             cout <<endl << endl;
-                            cout << "    ----------------------------------Unable to Find Customer----------------------------------- " << endl;
-                            cout << "    ----------------------------------Does not Exist in System---------------------------------- " << endl;
+                            cout << "    ----------------------------------Unable to Find Customer----------------------------------- ";
+                            cout << "    ----------------------------------Does not Exist in System---------------------------------- ";
                         }
                         getch();
                     }
@@ -794,23 +756,18 @@ int main()
                         }
                         while(stringValidation(edit));
 
-                        upper(edit);
-
                         if (editFlag == false)
                         {
-                            editFlag = searchProduct(grocery, edit, psize);
+                            editFlag = searchProduct(grocery, Gprice, Gstock, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
-                            editFlag = searchProduct(snacks, edit, psize);
+                            editFlag = searchProduct(snacks, Sprice, Sstock, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
-                            editFlag = searchProduct(other, edit, psize);
+                            editFlag = searchProduct(product, Oprice, Ostock, edit, psize);
                         }
-
                         if (editFlag == false)
                         {
                             cout <<endl << endl;
@@ -823,7 +780,7 @@ int main()
                     else if (input == 6)
                     {
                         system("cls");
-                        compareSales(income.sale);
+                        compareSales(sale);
                         getch();
                     }
 
@@ -857,14 +814,14 @@ int main()
                         }
                     }
                     
-                    else if (input == 8)      // system should take date from system but it is for test
+                    else if (input == 8)
                     {
                         system("cls");
                         cout << "***************************************************************************************************************************" << endl;
                         cout << "                                                     Set Date                                                            \n";
                         cout << "***************************************************************************************************************************" << endl;
                         cout << endl;
-                        cout << "                                   Date :    " << day << "-" << month << "-" << year << endl << endl;
+                        cout << "                                   Date :    " << date << endl << endl;
                         cout << " Enter Date in Format (DD-MM-YYYY)  :  ";
                         do
                         {
@@ -872,7 +829,7 @@ int main()
                         } 
                         while (stringValidation(date));
                         
-                        validateDate(date,income);
+                        validateDate(date);
                         getch();
                     }
 
@@ -890,189 +847,194 @@ int main()
                         getch();
                     }
                 }
+        
             }
+            
         }
         
         else if (choice == 3)  // log in as customer
         {
-            if (signIn(user,key,customer))
-            {        
-                while (Cflag == false)
+
+            if (signIn(user,key))
+            {
+                    while (Cflag == false)
+            {
+                system("cls");
+                cout << "****************************************************************************************************************************************************************************" << endl;                                                
+                cout << "                 _______ .______        ______     ______  _______ .______     ____    ____         _______.___________.  ______   .______       _______                    " << endl;
+                cout << "                /  _____||   _  \\      /  __  \\   /      ||   ____||   _  \\    \\   \\  /   /        /       |           | /  __  \\  |   _  \\     |   ____|            " << endl;
+                cout << "               |  |  __  |  |_)  |    |  |  |  | |  ,----'|  |__   |  |_)  |    \\   \\/   /        |   (----`---|  |----`|  |  |  | |  |_)  |    |  |__                    " << endl;
+                cout << "               |  | |_ | |      /     |  |  |  | |  |     |   __|  |      /      \\_    _/          \\   \\       |  |     |  |  |  | |      /     |   __|                  " << endl;
+                cout << "               |  |__| | |  |\\  \\----.|  `--'  | |  `----.|  |____ |  |\\  \\----.   |  |        .----)   |      |  |     |  `--'  | |  |\\  \\----.|  |____              " << endl;
+                cout << "                \\______| | _| `._____| \\______/   \\______||_______|| _| `._____|   |__|        |_______/       |__|      \\______/  | _| `._____||_______|               " << endl;
+                cout << "                                                                                                                                                                            " << endl;                                       
+                cout << "                                                                                  (Customer Menu)                                                                           " << endl;
+                cout << "****************************************************************************************************************************************************************************" << endl;
+                cout << endl;
+                cout << "                        1.       Add a Product to Cart        " << endl;
+                cout << "                        2.       Show Products in Your Cart   " << endl;
+                cout << "                        3.       Delete a Product from Cart   " << endl;
+                cout << "                        4.       List of All Products at Store" << endl;
+                cout << "                        5.       User Detail                  " << endl;
+                cout << "                        6.       Recharge Store Card          " << endl;
+                cout << "                        7.       Generate Total Bill          " << endl;
+                cout << "                        0.       Exit                  " << endl << endl;
+        
+                do
                 {
-                    system("cls");
-                    cout << "****************************************************************************************************************************************************************************" << endl;                                                
-                    cout << "                 _______ .______        ______     ______  _______ .______     ____    ____         _______.___________.  ______   .______       _______                    " << endl;
-                    cout << "                /  _____||   _  \\      /  __  \\   /      ||   ____||   _  \\    \\   \\  /   /        /       |           | /  __  \\  |   _  \\     |   ____|            " << endl;
-                    cout << "               |  |  __  |  |_)  |    |  |  |  | |  ,----'|  |__   |  |_)  |    \\   \\/   /        |   (----`---|  |----`|  |  |  | |  |_)  |    |  |__                    " << endl;
-                    cout << "               |  | |_ | |      /     |  |  |  | |  |     |   __|  |      /      \\_    _/          \\   \\       |  |     |  |  |  | |      /     |   __|                  " << endl;
-                    cout << "               |  |__| | |  |\\  \\----.|  `--'  | |  `----.|  |____ |  |\\  \\----.   |  |        .----)   |      |  |     |  `--'  | |  |\\  \\----.|  |____              " << endl;
-                    cout << "                \\______| | _| `._____| \\______/   \\______||_______|| _| `._____|   |__|        |_______/       |__|      \\______/  | _| `._____||_______|               " << endl;
-                    cout << "                                                                                                                                                                            " << endl;                                       
-                    cout << "                                                                                  (Customer Menu)                                                                           " << endl;
-                    cout << "****************************************************************************************************************************************************************************" << endl;
-                    cout << endl;
-                    cout << "                        1.       Add a Product to Cart        " << endl;
-                    cout << "                        2.       Show Products in Your Cart   " << endl;
-                    cout << "                        3.       Delete a Product from Cart   " << endl;
-                    cout << "                        4.       List of All Products at Store" << endl;
-                    cout << "                        5.       User Detail                  " << endl;
-                    cout << "                        6.       Recharge Store Card          " << endl;
-                    cout << "                        7.       Generate Total Bill          " << endl;
-                    cout << "                        0.       Exit                  " << endl << endl;
-            
+                    cout << "                                 Enter Choice : ";
+                    cin >> input;
+                    cin.ignore(100,'\n');
+                } 
+                while (validation(input));
+        
+                if (input == 1)
+                {
                     do
-                    {
-                        cout << "                                 Enter Choice : ";
-                        cin >> input;
-                        cin.ignore(100,'\n');
-                    } 
-                    while (validation(input));
-            
-                    if (input == 1)
-                    {
-                        do
-                        {        
-                            system("cls");
-                            cout << "***************************************************************************************************************************" << endl;
-                            cout << "                                             Add a Product in Cart                                                       \n";
-                            cout << "***************************************************************************************************************************" << endl;
-                            cout << endl;
-                            cout << "         " << setw(20) << "Sr.no" << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"Stock" <<endl;
-                            cout << "***************************************************************************************************************************" << endl; 
-                            cout <<endl;
-                            cout << "                                                Grocery Items                                                            \n";
-                            cout << endl;
-                            displayListToCustomer(grocery,psize);
-                            cout << "                                                    Snacks                                                               \n";
-                            cout << endl;
-                            displayListToCustomer(snacks,psize);
-                            cout << "                                                Other Products                                                           \n";
-                            cout << endl;
-                            displayListToCustomer(other,psize);
-                            cout << endl << endl;
-
-                            addCart(item, grocery, snacks, other, psize);
-
-                            cout << "                  Enter '0' for exit :   ";
-                            control = getch();
-                        } 
-                        while (control != '0');
-                        
-                    }
-
-                    else if (input == 2)
-                    {
+                    {        
                         system("cls");
                         cout << "***************************************************************************************************************************" << endl;
-                        cout << "                                             Show Products in Cart                                                       \n";
+                        cout << "                                             Add a Product in Cart                                                       \n";
                         cout << "***************************************************************************************************************************" << endl;
                         cout << endl;
-                        cout << "         " << setw(20) << "Sr.no" << setw(30) <<"Product" << setw(30) <<"Quantity" << setw(30) <<"Price" <<endl;
+                        cout << "         " << setw(20) << "Sr.no" << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"Stock" <<endl;
                         cout << "***************************************************************************************************************************" << endl; 
                         cout <<endl;
-                        cartList(item,psize);
-                        getch();
-                    }
-                    
-                    else if (input == 3)
-                    {
-                        bool editFlag = false;
-                        system("cls");
-                        cout << "***************************************************************************************************************************" << endl;
-                        cout << "                                                 Delete a Product                                                        \n";
-                        cout << "***************************************************************************************************************************" << endl;
-                        cout << endl;
-                        cout << "                    Enter Product You Want to Delete : ";
-                        do
-                        {
-                            getline(cin, edit);
-
-                        }
-                        while (stringValidation(edit));
-                        upper(edit);
-
-                        editFlag = cartDelete(item, grocery, snacks, other, edit, psize);
-                        getch();
-                    }
-
-                    else if (input == 4)
-                    {
-                        system("cls");
-                        cout << "***************************************************************************************************************************" << endl;
-                        cout << "         " << setw(20) << "Sr.no" << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"Stock" <<endl;
-                        cout << "***************************************************************************************************************************" << endl <<endl;
                         cout << "                                                Grocery Items                                                            \n";
                         cout << endl;
-                        displayListToCustomer(grocery,psize);
+                        displayListToCustomer(grocery,Gprice,Gstock,psize);
                         cout << "                                                    Snacks                                                               \n";
                         cout << endl;
-                        displayListToCustomer(snacks,psize);
+                        displayListToCustomer(snacks,Sprice,Sstock,psize);
                         cout << "                                                Other Products                                                           \n";
                         cout << endl;
-                        displayListToCustomer(other,psize);
-                        getch();
-                    }
+                        displayListToCustomer(product,Oprice,Ostock,psize);
+                        cout << endl << endl;
+
+                        addCart(cart,cartQuantity,cartPrice,psize);
+
+                        cout << "                  Enter '0' for exit :   ";
+                        control = getch();
+                    } 
+                    while (control != '0');
                     
-                    else if (input == 5)
-                    {
-                        system("cls");
-                        cout << "***************************************************************************************************************************" << endl;
-                        cout << "                                                      User Details                                                       \n";
-                        cout << "***************************************************************************************************************************" << endl;
-                        cout << endl;
-                        
-                        cout << left;
-                        cout << endl << endl;
-                        cout << "               U S E R N A M E                       :       " << customer[userSearchIndex].username;
-                        cout << endl << endl;
-                        cout << "               B A N K  A C C O U N T   N O          :       " << customer[userSearchIndex].bank;
-                        cout << endl << endl;
-                        cout << "               S T O R E   C A R D   B A L A N C E   : Rs.   " << customer[userSearchIndex].balance;
-                        cout << endl << endl;
-                        cout << "               T O T A L   B A L A N C E   U S E D   : Rs.   " << customer[userSearchIndex].usedBalance;
-                        getch();
-                    }
+                }
 
-                    else if (input == 6)
+                else if (input == 2)
+                {
+                    system("cls");
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << "                                             Show Products in Cart                                                       \n";
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << endl;
+                    cout << "         " << setw(20) << "Sr.no" << setw(30) <<"Product" << setw(30) <<"Quantity" << setw(30) <<"Price" <<endl;
+                    cout << "***************************************************************************************************************************" << endl; 
+                    cout <<endl;
+                    cartList(cart,cartQuantity,cartPrice,psize);
+                    getch();
+                }
+                
+                else if (input == 3)
+                {
+                    bool editFlag = false;
+                    system("cls");
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << "                                                 Delete a Product                                                        \n";
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << endl;
+                    cout << "                    Enter Product You Want to Delete : ";
+                    do
                     {
-                        system("cls");
-                        cout << "***************************************************************************************************************************" << endl;
-                        cout << "                                                   RECHARGE STORE CARD                                                   \n";
-                        cout << "***************************************************************************************************************************" << endl;
-                        cout << endl;
-                        rechargeCard(customer,psize);
+                        getline(cin, edit);
+
                     }
+                    while (stringValidation(edit));
                     
-                    else if (input == 7)
-                    {
-                        system("cls");
-                        cout << "***************************************************************************************************************************" << endl;
-                        cout << "                                             Products in Your Cart                                                       \n";
-                        cout << "***************************************************************************************************************************" << endl;
-                        generateBill(item,grocery,snacks,other,customer,rebate,income,cartSize);
-                        getch();
-                    }
+                    upper(edit);
 
-                    else if (input == 0)
-                    {
-                        cout << "            ------------------------------------------T H A N K  Y O U !------------------------------------------" <<endl;
-                        cout << "            ------------------------------------------Back To Login Page.-----------------------------------------" << endl;
-                        Cflag = true;
-                        getch();
-                    }
+                    editFlag = cartDelete(cart, cartQuantity, edit, psize);
+                }
 
-                    else
-                    {
-                        cout << "            --------------------------------------------INVALID INPUT!--------------------------------------------" << endl;
-                        getch();
-                    }
+                else if (input == 4)
+                {
+                    system("cls");
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << "         " << setw(20) << "Sr.no" << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"Stock" <<endl;
+                    cout << "***************************************************************************************************************************" << endl <<endl;
+                    cout << "                                                Grocery Items                                                            \n";
+                    cout << endl;
+                    displayListToCustomer(grocery,Gprice,Gstock,psize);
+                    cout << "                                                    Snacks                                                               \n";
+                    cout << endl;
+                    displayListToCustomer(snacks,Sprice,Sstock,psize);
+                    cout << "                                                Other Products                                                           \n";
+                    cout << endl;
+                    displayListToCustomer(product,Oprice,Ostock,psize);
+                    getch();
+                }
+                
+                else if (input == 5)
+                {
+                    system("cls");
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << "                                                      User Details                                                       \n";
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << endl;
+                    
+                    cout << left;
+                    cout << endl << endl;
+                    cout << "               U S E R N A M E                       :       "  << username[userSearchIndex];
+                    cout << endl << endl;
+                    cout << "               B A N K  A C C O U N T   N O          :       " << bank[userSearchIndex];
+                    cout << endl << endl;
+                    cout << "               S T O R E   C A R D   B A L A N C E   : Rs.   " << balance[userSearchIndex];
+                    cout << endl << endl;
+                    cout << "               T O T A L   B A L A N C E   U S E D   : Rs.   " << usedBalance[userSearchIndex];
+                    getch();
+                }
+
+                else if (input == 6)
+                {
+                    system("cls");
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << "                                                   RECHARGE STORE CARD                                                   \n";
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << endl;
+                    rechargeCard(username,passkey,bank,balance,psize);
+                }
+                
+                else if (input == 7)
+                {
+                    system("cls");
+                    cout << "***************************************************************************************************************************" << endl;
+                    cout << "                                             Products in Your Cart                                                       \n";
+                    cout << "***************************************************************************************************************************" << endl;
+                    generateBill(cart,cartQuantity,cartPrice,psize);
+                    getch();
+                }
+
+                else if (input == 0)
+                {
+                    cout << "            ------------------------------------------T H A N K  Y O U !------------------------------------------" <<endl;
+                    cout << "            ------------------------------------------Back To Login Page.-----------------------------------------" << endl;
+                    Cflag = true;
+                    getch();
+                }
+
+                else
+                {
+                    cout << "            --------------------------------------------INVALID INPUT!--------------------------------------------" << endl;
+                    getch();
                 }
             }
+        
+            }    
+        
         }
 
         else if (choice == 4)  // sign up as customer
         {
-            signUp(customer, psize);
+            signUp(username, passkey, bank, balance, psize);
         }
 
         else if (choice == 0)  // exiting program
@@ -1089,10 +1051,10 @@ int main()
         }
     }
     
-    saveProducts(grocery,snacks,other,rebate,psize);
-    saveUser(customer,detail,psize);
-    saveCart(item,psize);
-    saveSales(income);
+    saveProducts(grocery,GcostPrice,Gprice,Gstock,psize);
+    saveUser(username,passkey,bank,balance,usedBalance,psize);
+    saveCart(cart,cartQuantity,cartPrice,psize);
+    saveSales(sale,saleOfMonth,totalOfMonth);
     return 0;
 }
 
@@ -1142,13 +1104,13 @@ bool logIn(string x, string name, string y, string key)
     return true;
 }
 
-bool signUp(user customer[], int size)
+void signUp(string name[], string pass[], string bank[], double balance[], int size)
 {
     string confirm;
     for (int i = 0; i < size; i++)  
     {
         int index = 0;
-        if (customer[i].username == "N/A" || customer[i].username == "")  // checks whether there is space in system or not
+        if (name[i] == "N/A" || name[i] == "")  // checks whether there is space in system or not
         {
             system("cls");
             cout << "****************************************************************************************************************************************************************************" << endl;                                                
@@ -1167,15 +1129,15 @@ bool signUp(user customer[], int size)
             {
                 cout << setw(35) << endl;
                 cout << endl <<"               U S E R N A M E                       :       ";
-                getline(cin, customer[i].username);
+                getline(cin, name[i]);
                 cout << setw(35);
                 cout << endl <<"               P A S S W O R D                       :       ";
-                customer[i].password = hidePassword();
+                pass[i] = hidePassword();
                 cout << setw(35);
                 cout << endl <<"               C O N F I R M   P A S S W O R D       :       ";
                 confirm = hidePassword();
 
-                while (customer[i].password != confirm)
+                while (pass[i] != confirm)
                 {
                     cout << "  ------------------------------------------Invalid Confirm Password-----------------------------------------" << endl;
                     cout << "  -------------------------------------------------Try Again-------------------------------------------------" << endl;
@@ -1186,27 +1148,27 @@ bool signUp(user customer[], int size)
 
                 cout << setw(35) << endl;
                 cout << endl <<"               B A N K  A C C O U N T   N O          :       ";
-                getline(cin, customer[i].bank);
+                getline(cin, bank[i]);
                 cout << setw(35) << endl;
             }
-            while(stringValidation(customer[i].bank) || stringValidation(confirm) || searchUser(customer[i].username,customer,size,i)
-                  || stringValidation(customer[i].password) || stringValidation(customer[i].username));
+            while(stringValidation(bank[i]) || stringValidation(confirm) || searchUser(name[i],size,i)
+                  || stringValidation(pass[i]) || stringValidation(name[i]));
 
             cout <<  endl <<"               B A L A N C E   T O   R E C H A R G E :    Rs. ";
-            cin >> customer[i].balance;
+            cin >> balance[i];
             cin.ignore(256, '\n'); 
             
 
             cout << "  ------------------------------------------Signed In Successfully-----------------------------------------" << endl;
-            return true;
+            return ;
         }
     }
     cout << "                          ------------------------------------------Space is Full-----------------------------------------" << endl;
     cout << "                          -----------------------------------------Unable to Store----------------------------------------" << endl;
-    return true;
+    
 }
 
-bool signIn(string x, string y, user customer[])
+bool signIn(string x, string y)
 {
     bool searchFlag;
     char ch;                  // used take out of login page
@@ -1240,7 +1202,7 @@ bool signIn(string x, string y, user customer[])
 
         for (int i = 0; i < psize; i++)
         {
-            if (customer[i].username == x && customer[i].password == y)
+            if (username[i] == x && passkey[i] == y)
             {
                 userSearchIndex = i;
                 searchFlag = false;
@@ -1268,52 +1230,15 @@ bool signIn(string x, string y, user customer[])
 
 void initialize(string arr[], int size, string value) 
 {
-    for (int i = 0; i < size; i++) 
-    {
+    for (int i = 0; i < size; i++) {
         arr[i] = value;
-    }
-}
-
-void initializeProduct(product arr[], int size, string value) 
-{
-    for (int i = 0; i < size; i++) 
-    {
-        arr[i].product = value;
-    }
-}
-
-void initializeEmployee(employee arr[], int size, string value) 
-{
-    for (int i = 0; i < size; i++) 
-    {
-        arr[i].employee = value;
-    }
-}
-
-void initializeUser(user arr[], int size, string value) 
-{
-    for (int i = 0; i < size; i++) 
-    {
-        arr[i].username = value;
-        arr[i].password = value;
     }
 }
 
 void initializeDouble(double arr[], int size, double value) 
 {
-    for (int i = 0; i < size; i++) 
-    {
+    for (int i = 0; i < size; i++) {
         arr[i] = value;
-    }
-}
-
-void initializeDiscount(discount arr[], int size, double value) 
-{
-    for (int i = 0; i < size; i++) 
-    {
-        arr[i].discountCoupons = value;
-        arr[i].discountPercentage = value;
-        arr[i].maxDiscount = value; 
     }
 }
 
@@ -1323,50 +1248,35 @@ void initializeInt(int arr[], int size, int value)
         arr[i] = value;
     }
 }
-            
-void initializeCart(cart item[], int size, int lenght, string value)
-{                                                                     // initialiaze 2D array
-    for (int i = 0; i < lenght; i++)
-    {
-        for (int j = 0; j < size; j++)
-        {
-            item[i].cart[j] = value;
-            item[i].price[j] = 0;
-            item[i].quantity[j] = 0;
-        }
-    }
-}
 
-double addProduct(product item[], int size)
+double addProduct(string arr1[], int arr2[], int arr3[], int arr4[], int size)
 {
     double total = 0;
     for (int i = 0; i < psize; i++)
     {
         flag1[1] = true;     // used to find whether item is stored or not
-        if (item[i].product == "N/A")
+        if (arr1[i] == "N/A")
         {
             do
             {
                 cout << endl  << "                Enter Product            : ";
-                getline(cin,item[i].product);
-                upper(item[i].product);
+                getline(cin,arr1[i]);
+                upper(arr1[i]);
                 cout << endl  << "                Enter Cost Price         : ";
-                cin >> item[i].cost;
+                cin >> arr3[i];
                 cin.ignore(256,'\n');
                 cout << endl  << "                Enter Sale Price         : ";
-                cin >> item[i].sale;
+                cin >> arr2[i];
                 cin.ignore(256,'\n');
                 cout << endl  << "                Enter Product Stock      : ";
-                cin >> item[i].quantity;
+                cin >> arr4[i];
                 cin.ignore(256,'\n');
-                cout << endl;
             } 
-            while (productValidation(item[i].sale,item[i].cost,item[i].quantity) || stringValidation(item[i].product)); // check validation of input
+            while (productValidation(arr2[i],arr3[i],arr4[i]) || stringValidation(arr1[i])); // check validation of input
             
-            total += item[i].cost*item[i].quantity;
+            total += arr3[i]*arr4[i];
             flag1[1] = false;
-            cout << endl << endl;
-            cout << endl << "  ---------------------------------------Product Stored Successfully---------------------------------------      " << endl;
+            cout << endl << "                   Product Stored Successfully      " << endl;
             break;
         }
     }
@@ -1378,23 +1288,23 @@ double addProduct(product item[], int size)
     return total;
 }
 
-void addEmployee(employee detail[], int size)
+void addEmployee(string arr1[], double arr2[], int size)
 {
     for (int i = 0; i < size; i++)
     {
         flag1[1] = true;
-        if (detail[i].employee == "N/A")
+        if (arr1[i] == "N/A")
         {
             do
             {
                 cout << "                Enter Employee Name : ";
-                getline(cin,detail[i].employee);
+                getline(cin,arr1[i]);
                 cout << "                Enter Salary        : ";
-                cin >> detail[i].salary;
+                cin >> arr2[i];
                 cin.ignore(256,'\n');
          
             }
-            while(stringValidation(detail[i].employee) || validation(detail[i].salary));
+            while(stringValidation(arr1[i]) || validation(arr2[i]));
             
             flag1[1] = false;
             cout << endl << "                            Employee Data Stored Successfully      " << endl;
@@ -1408,7 +1318,7 @@ void addEmployee(employee detail[], int size)
     }
 }
 
-void addCart(cart item[], product grocery[], product snacks[], product other[], int size)
+void addCart(string products[][50], int Cartquantity[][50],int price[][50], int size)
 {
     
     string add;
@@ -1417,34 +1327,35 @@ void addCart(cart item[], product grocery[], product snacks[], product other[], 
     {
         bool searchFlag = false;
         flag1[1] = true;
-        if (item[userSearchIndex].cart[i] == "N/A")
+        if (products[userSearchIndex][i] == "N/A")
         {
             do
             {
                 cout << endl << "                Enter Product : ";
                 getline(cin,add);
+                upper(add);
                 cout << endl << "                Enter Quantity : ";
                 cin >> quantity;
                 cin.ignore(100,'\n');
             } 
             while (stringValidation(add) || validation(quantity));
-            upper(add);
+                
 
             if (searchFlag == false)
             {
-                searchFlag = searchProduct(grocery, add, psize);
+                searchFlag = searchProduct(grocery, Gprice, Gstock, add, psize);
                 if (searchFlag == true)
                 {
-                    if (quantity <= grocery[index].quantity)
+                    if (quantity <= Gstock[index])
                     {
-                        item[userSearchIndex].cart[i] = add;
-                        item[userSearchIndex].quantity[i] = quantity;
-                        item[userSearchIndex].price[i] = grocery[index].sale;
+                        products[userSearchIndex][i] = add;
+                        cartQuantity[userSearchIndex][i] = quantity;
+                        price[userSearchIndex][i] = Gprice[index];
                         productFind[i][0] = 1;
                         productFind[i][1] = index;
-                        removeStock(item,grocery,snacks,other,productFind,i,size);
+                        removeStock(Cartquantity,productFind,i,size);
                     }
-                    else if (quantity > grocery[index].quantity)
+                    else if (quantity > Gstock[index])
                     {                        
                         cout <<endl << endl;
                         cout << "    -------------------------------------Unable to Store------------------------------------- " ;
@@ -1452,82 +1363,76 @@ void addCart(cart item[], product grocery[], product snacks[], product other[], 
                     }
                 }
             }
-
             if (searchFlag == false)
             {
-                searchFlag = searchProduct(snacks, add, psize);
+                searchFlag = searchProduct(snacks, Sprice, Sstock, add, psize);
                 if (searchFlag == true)
                 {
-                    if (quantity <= snacks[index].quantity)
-                    {                        
-                        item[userSearchIndex].cart[i] = add;
-                        item[userSearchIndex].quantity[i] = quantity;
-                        item[userSearchIndex].price[i] = snacks[index].sale;
+                    if (quantity <= Sstock[index])
+                    {
+                        products[userSearchIndex][i] = add;
+                        cartQuantity[userSearchIndex][i] = quantity;
+                        price[userSearchIndex][i] = Sprice[index];
                         productFind[i][0] = 2;
                         productFind[i][1] = index;
-                        removeStock(item,grocery,snacks,other,productFind,i,size);
+                        removeStock(Cartquantity,productFind,i,size);
                     }
-                    else if (quantity > snacks[index].quantity)
+                    else if (quantity > Sstock[index])
                     {                        
                         cout <<endl << endl;
                         cout << "    -------------------------------------Unable to Store------------------------------------- " ;
                         cout <<endl << endl;
-                        break;
                     }
                 }
             }
-
             if (searchFlag == false)
             {
-                searchFlag = searchProduct(other, add, psize);
+                searchFlag = searchProduct(product, Oprice, Ostock, add, psize);
                 if (searchFlag == true)
                 {
-                    if (quantity <= other[index].quantity)
+                    if (quantity <= Ostock[index])
                     {
-                        item[userSearchIndex].cart[i] = add;
-                        item[userSearchIndex].quantity[i] = quantity;
-                        item[userSearchIndex].price[i] = other[index].sale;
+                        products[userSearchIndex][i] = add;
+                        cartQuantity[userSearchIndex][i] = quantity;
+                        price[userSearchIndex][i] = Oprice[index];
                         productFind[i][0] = 3;
                         productFind[i][1] = index;
-                        removeStock(item,grocery,snacks,other,productFind,i,size);
+                        removeStock(Cartquantity,productFind,i,size);
                     }
-                    else if (quantity > other[index].quantity)
+                    else if (quantity > Ostock[index])
                     {                        
                         cout <<endl << endl;
                         cout << "    -------------------------------------Unable to Store------------------------------------- " ;
                         cout <<endl << endl;
-                        break;
                     }
-                }
-            }
+                }            }
             cout << endl << endl;
             cin.ignore(256,'\n');
             
             if (searchFlag == false)
             {
                 cout <<endl << endl;
-                cout << "    ---------------------------------------Unable to Find Product--------------------------------------- " ;
+                cout << "    -------------------------------------Unable to Find Product------------------------------------- " ;
                 cout <<endl << endl;
                 break;
             }
 
             flag1[1] = false;
-            cout << endl << "                                   Product Stored Successfully      " << endl;
+            cout << endl << "                   Product Stored Successfully      " << endl;
             break;
         }
     }
 }
 
-void displayList(product item[], int size)
+void displayList(string arr1[], int sale[], int cost[], int stock[], int size)
 {
     cout <<left;
     flag1[4] = true;
     for (int i = 0; i < size; i++)
     {
-        if (item[i].product != "N/A")
+        if (arr1[i] != "N/A")
         {
-            cout << "         " << setw(20) << i+1 << setw(30) << item[i].product << "Rs." << setw(30) << item[i].sale;
-            cout << "Rs." << setw(30) << item[i].cost << setw(4) << item[i].quantity << "Pcs" <<endl;
+            cout  << "         " << setw(20) << i+1 << setw(30) << arr1[i] << "Rs." << setw(30) << sale[i] << "Rs." << setw(30) << cost[i] << stock[i] <<endl;
             flag1[4] = false;
         }
     }
@@ -1537,16 +1442,15 @@ void displayList(product item[], int size)
     }
 }
 
-void displayListToCustomer(product item[], int size)
+void displayListToCustomer(string arr1[], int sale[], int stock[], int size)
 {
     cout <<left;
     flag1[4] = true;
     for (int i = 0; i < size; i++)
     {
-        if (item[i].product != "N/A")
+        if (arr1[i] != "N/A")
         {
-            cout << "         " << setw(20) << i+1 << setw(30) << item[i].product << "Rs." << setw(30) << item[i].sale;
-            cout << setw(30) << item[i].quantity <<endl;
+            cout  << "         " << setw(20) << i+1 << setw(30) << arr1[i] << "Rs." << setw(30) << sale[i] << setw(30) << stock[i] <<endl;
             flag1[4] = false;
         }
     }
@@ -1556,16 +1460,15 @@ void displayListToCustomer(product item[], int size)
     }
 }
 
-void discountList(discount rebate[], int size)
+void discountList(double arr1[], double arr2[], int size)
 {
     cout <<left;
     bool disFlag = true;
     for (int i = 0; i < size; i++)
     {
-        if (rebate[i].discountCoupons != 0)
+        if (arr1[i] != 0)
         {
-            cout << "         " << setw(30) << i+1 << "Rs. " << setw(30) << rebate[i].discountCoupons << rebate[i].discountPercentage << setw(30) << "%" ;
-            cout << "Rs. " << rebate[i].maxDiscount <<endl;
+            cout  << "         " << setw(30) << i+1 << setw(30) << arr1[i]  << arr2[i] << "%" <<endl;
             disFlag = false;
         }
     }
@@ -1575,17 +1478,15 @@ void discountList(discount rebate[], int size)
     }
 }
 
-void cartList(cart item[], int size)
+void cartList(string product[][50], int quantity[][50],int price[][50], int size)
 {
     cout <<left;
     bool cartFlag = true;
     for (int i = 0; i < size; i++)
     {
-        if (item[userSearchIndex].cart[i] != "N/A")             // UserSearchIndex is global variable and assign its value customer sign in
+        if (product[userSearchIndex][i] != "N/A")             // UserSearchIndex is global variable and assign its value customer sign in
         {
-            cout << "         " << setw(20) << i+1 << setw(30) << item[userSearchIndex].cart[i];
-            cout << setw(30)  << item[userSearchIndex].quantity[i];
-            cout << "  Rs." << setw(30) << item[userSearchIndex].price[i] <<endl;
+            cout  << "         " << setw(20) << i+1 << setw(30) << product[userSearchIndex][i] << setw(30)  << quantity[userSearchIndex][i]  << "  Rs." << setw(30) << price[userSearchIndex][i] <<endl;
             cartFlag = false;
         }
     }
@@ -1595,74 +1496,55 @@ void cartList(cart item[], int size)
     }
 }
 
-bool productEdit(product item[], string edit, sales income, int size)
+bool productEdit(string item[], int sale[], int cost[], int stock[], string edit, int size)
 {
     
     for (int i = 0; i < size; i++)
     {
-        if (item[i].product == edit)
+        if (item[i] == edit)
         {
-            income.totalOfMonth[month] -= (item[i].cost)*(item[i].quantity);
+            totalOfMonth[month] -= cost[i]*stock[i];
             
             cout << endl << endl;
-            cout << "          " << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"  Stock" <<endl;
+            cout << "          " << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"Stock" <<endl;
             cout << "***************************************************************************************************************************" << endl <<endl;
-            cout << "          " << setw(30) << item[i].product << "Rs." << setw(30) << item[i].cost << setw(30) << item[i].quantity <<endl << endl;
+            cout << "          " << setw(30) << item[i] << "Rs." << setw(30) << cost[i] << setw(30) << stock[i] <<endl << endl;
             do
             {
                 cout << "                Enter Product            : ";
-                getline(cin,item[i].product);
-                upper(item[i].product);
+                getline(cin,item[i]);
                 cout << "                Enter Cost Price         : ";
-                cin >> item[i].cost;
+                cin >> cost[i];
                 cin.ignore(256,'\n');
                 cout << "                Enter Sale Price         : ";
-                cin >> item[i].sale;
+                cin >> sale[i];
                 cin.ignore(256,'\n');
                 cout << "                Enter Product Stock      : ";
-                cin >> item[i].quantity;
+                cin >> stock[i];
                 cin.ignore(256,'\n');
-                income.totalOfMonth[month] += (item[i].cost)*(item[i].quantity);
+                totalOfMonth[month] += cost[i]*stock[i];
             } 
-            while (productValidation(item[i].sale,item[i].cost,item[i].cost) || stringValidation(item[i].product));
+            while (productValidation(sale[i],cost[i],stock[i]) || stringValidation(item[i]));
             return true;
         }
     }
     return false;
 }
 
-bool searchProduct(product item[], string search, int size)
+bool searchProduct(string arr1[], int arr2[], int arr3[], string edit, int size)
 {
     
     for (int i = 0; i < size; i++)
     {
-        if (item[i].product == search)
+        if (arr1[i] == edit)
         {
             cout << endl << endl;
             
-            cout << "          " << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"     Stock" <<endl;
+            cout << "***************************************************************************************************************************" << endl;
+            cout << "          " << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"Stock" <<endl;
             cout << "***************************************************************************************************************************" << endl <<endl;
-            cout << "          " << setw(30) << item[i].product << "Rs." << setw(30) << item[i].sale;
-            cout << setw(5) << item[i].quantity << "Pcs." <<endl << endl;
-            index = i;
-            return true;
-        }
-    }
-    return false;
-}
-
-bool searchCustomer(user customer[], string search, int size)
-{
-    
-    for (int i = 0; i < size; i++)
-    {
-        if (customer[i].username == search)
-        {
-            cout << endl << endl;
-            
-            cout << "          " << setw(30) <<"Customer Name" << setw(30) <<"Account No." << setw(30) <<"Balance" <<endl;
+            cout << "          " << setw(30) << arr1[i] << "Rs." << setw(30) << arr2[i] << setw(30) << arr3[i] <<endl << endl;
             cout << "***************************************************************************************************************************" << endl <<endl;
-            cout << "          " << setw(30) << customer[i].username << setw(30) << customer[i].bank << "Rs." << setw(30) << customer[i].balance <<endl << endl;
             index = i;
             getch();
             return true;
@@ -1671,18 +1553,38 @@ bool searchCustomer(user customer[], string search, int size)
     return false;
 }
 
-bool productDelete(product item[],sales income, string edit, int size)
+bool searchCustomer(string arr1[], string arr2[], double arr3[], string edit, int size)
+{
+    
+    for (int i = 0; i < size; i++)
+    {
+        if (arr1[i] == edit)
+        {
+            cout << endl << endl;
+            
+            cout << "          " << setw(30) <<"Customer Name" << setw(30) <<"Account No." << setw(30) <<"Balance" <<endl;
+            cout << "***************************************************************************************************************************" << endl <<endl;
+            cout << "          " << setw(30) << arr1[i]<< setw(30) << arr2[i]  << "Rs." << setw(30) << arr3[i] <<endl << endl;
+            index = i;
+            getch();
+            return true;
+        }
+    }
+    return false;
+}
+
+bool productDelete(string item[], int price[], int stock[], int costPrice[], string edit, int size)
 {
     int flag = 0;
-    if (searchProduct(item, edit, size))
+    if (searchProduct(item, stock, price, edit, size))
     {
         cout << endl << endl;
         cout << "Confirm Delete (1 for Yes / 0 for no) : ";
         cin >> flag;
         if (flag == 1)
         {
-            item[userSearchIndex].product = "N/A" ;
-            income.totalOfMonth[month] = income.totalOfMonth[month] - (item[userSearchIndex].quantity) * (item[userSearchIndex].cost); 
+            item[userSearchIndex] = "N/A" ;
+            totalOfMonth[month] = totalOfMonth[month] - stock[userSearchIndex]*costPrice[userSearchIndex]; 
             cout << "            ----------------------------------Product Deleted Succesfully.----------------------------------" << endl;
             return true;
         }
@@ -1690,19 +1592,19 @@ bool productDelete(product item[],sales income, string edit, int size)
     return false;
 }
 
-bool discountDelete(discount rebate[], double del, int size)
+bool discountDelete(double arr1[], double edit, int size)
 {
     int flag = 0;
     for (int i = 0; i < size; i++)
     {
-        if (rebate[i].discountCoupons == del)
+        if (arr1[i] == edit)
         {
             cout << endl << endl;
             cout << "Confirm Delete (1 for Yes / 0 for no) : ";
             cin >> flag;
             if (flag == 1)
             {
-                rebate[i].discountCoupons = 0 ;
+                arr1[i] = 0 ;
                 cout << "";
                 getch();
                 return true;
@@ -1713,19 +1615,20 @@ bool discountDelete(discount rebate[], double del, int size)
     return false;
 }
 
-bool employeeDelete(employee details[], string del, int size)
+bool employeeDelete(string arr1[], string edit, int size)
 {
     int flag = 0;
     for (int i = 0; i < size; i++)
     {
-        if (details[i].employee == del)
+        if (arr1[i] == edit)
         {
             cout << endl << endl;
             cout << "Confirm Delete (1 for Yes / 0 for no) : ";
             cin >> flag;
             if (flag == 1)
             {
-                details[i].employee = "N/A" ;
+                arr1[i] = "N/A" ;
+                cout << "";
                 getch();
                 return true;
             }
@@ -1735,15 +1638,15 @@ bool employeeDelete(employee details[], string del, int size)
     return false;
 }
 
-void customerList(user customer[], int size)
+void customerList(string arr1[], string arr2[], double arr3[], int size)
 {
     cout <<left;
     bool disFlag = true;
     for (int i = 0; i < size; i++)
     {
-        if (customer[i].username != "N/A" && customer[i].username != "")
+        if (arr1[i] != "N/A" && arr1[i] != "")
         {
-            cout  << "         " << setw(30) << i+1 << setw(30) << customer[i].username << setw(30) << customer[i].bank << "Rs." << customer[i].balance <<endl;
+            cout  << "         " << setw(30) << i+1 << setw(30) << arr1[i]  << setw(30) << arr2[i] << "Rs." << arr3[i] <<endl;
             disFlag = false;
         }
     }
@@ -1753,15 +1656,15 @@ void customerList(user customer[], int size)
     }
 }
 
-void employeeList(employee details[], int size)
+void employeeList(string arr1[], double arr2[], int size)
 {
     cout <<left;
     bool disFlag = true;
     for (int i = 0; i < size; i++)
     {
-        if (details[i].employee != "N/A")
+        if (arr1[i] != "N/A")
         {
-            cout  << "         " << setw(20) << i+1 << setw(50) << details[i].employee << "Rs." << details[i].salary <<endl;
+            cout  << "         " << setw(20) << i+1 << setw(50) << arr1[i] << "Rs." << arr2[i] <<endl;
             disFlag = false;
         }
     }
@@ -1771,17 +1674,17 @@ void employeeList(employee details[], int size)
     }
 }
 
-bool customerDelete(user customer[], string del, int size)
+bool customerDelete(string arr1[], string arr2[], double arr3[], string edit, int size)
 {
     int flag = 0;
-    if (searchCustomer(customer, del, size))
+    if (searchCustomer(arr1, arr2, arr3, edit, size))
     {
         cout << endl << endl;
         cout << "Confirm Delete (1 for Yes / 0 for no) : ";
         cin >> flag;
         if (flag == 1)
         {
-            customer[userSearchIndex].username = "N/A" ;
+            arr1[userSearchIndex] = "N/A" ;
             cout << "            -------------------------------------Customer Data Deleted.-------------------------------------" << endl;
             return true;
         }
@@ -1789,20 +1692,20 @@ bool customerDelete(user customer[], string del, int size)
     return false;
 }
 
-bool cartDelete(cart item[], product grocery[], product snacks[], product other[], string del, int size)
+bool cartDelete(string product[][50], int quantity[][50], string del, int size)
 {
     int flag = 0;
     for (int i = 0; i < size; i++)
     {
-        if (item[userSearchIndex].cart[i] == del)                                  // UserSearchIndex is global variable and assign its value customer sign in
+        if (product[userSearchIndex][i] == del)                                  // UserSearchIndex is global variable and assign its value customer sign in
         {
             cout << endl << endl;
             cout << "Confirm Delete (1 for Yes / 0 for no) : ";
             cin >> flag;
             if (flag == 1)
             {
-                item[userSearchIndex].cart[i] = "N/A" ;
-                plusStock(item,grocery,snacks,other,productFind,i,size);
+                product[userSearchIndex][index] = "N/A" ;
+                plusStock(quantity,productFind,i,size);
                 cout << "            -------------------------------------Product Deleted.-------------------------------------" << endl;
                 return true;
             }
@@ -1812,13 +1715,12 @@ bool cartDelete(cart item[], product grocery[], product snacks[], product other[
     return false;
 }
 
-// print bill of customer
-void generateBill(cart item[], product grocery[], product snacks[], product other[], user customer[], discount rebate[],sales income, int size)       // generate Bill of items in cart
+void generateBill(string product[][50], int quantity[][50], int price[][50], int size)
 {
     int confirm;
     cout << endl;
     cout << "         " << setw(20) << "Sr.no" << setw(30) <<"Product" << setw(30) <<"Quantity" << setw(30) <<"  Price" <<endl;
-    cartList(item, size);
+    cartList(product, quantity, price, size);
     cout << endl << endl;
     cout << "               Confirm Purchase (1 for Yes / 0 for No)  :   ";
     cin >> confirm;
@@ -1827,7 +1729,7 @@ void generateBill(cart item[], product grocery[], product snacks[], product othe
         system("cls");
         cout <<left;
         bool disFlag = true;
-        double total = 0;
+        int total = 0;
         int choice;
         cout << "***************************************************************************************************************************" << endl;
         cout << "                                                          Bill                                                           \n";
@@ -1836,20 +1738,15 @@ void generateBill(cart item[], product grocery[], product snacks[], product othe
         cout << "         " << setw(20) << "Sr.no" << setw(30) <<"Product" << setw(30) <<"Quantity" << setw(30) <<"Price" <<endl;            
         for (int i = 0; i < size; i++)
         {
-            if (item[userSearchIndex].cart[i] != "N/A")
+            if (product[userSearchIndex][i] != "N/A")
             {
-                double temp = 0;
-                temp = item[userSearchIndex].price[i]*item[userSearchIndex].quantity[i];
-
-                cout << "         " << setw(20) << i+1 << setw(30) << item[userSearchIndex].cart[i];
-                cout << setw(4) << item[userSearchIndex].quantity[i] << setw(26)  << " Pcs.";
-                cout << "Rs. "<< setw(30) << temp <<endl;
-                total = total + temp;
+                cout  << "         " << setw(20) << i+1 << setw(30) << product[userSearchIndex][i] << setw(4) << quantity[userSearchIndex][i] << setw(26)  << " Pcs." << "Rs. "<< setw(30) << price[userSearchIndex][i]*quantity[userSearchIndex][i] <<endl;
+                total = total + price[userSearchIndex][i]*quantity[userSearchIndex][i];
                 flag1[4] = false;
             }
         }
 
-        total = applyDiscount(total,rebate,dsize);
+        total = applyDiscount(total,discountCoupons,discountPercentage,maxDiscount,dsize);
 
         if (flag1[4] == false)
         {
@@ -1873,12 +1770,12 @@ void generateBill(cart item[], product grocery[], product snacks[], product othe
             
         if (choice == 1)
         {
-            if (total <= customer[userSearchIndex].balance)    // add sales on day wise and subtract balance from user card and add in its activity
+            if (total <= balance[userSearchIndex])    // add sales on day wise and subtract balance from user card and add in its activity
             {
-                income.sale[day] = income.sale[day] + total;
-                customer[userSearchIndex].usedBalance += total;
-                customer[userSearchIndex].balance -= total;
-                initializeCart(item,50,psize,"N/A");
+                sale[day] = sale[day] + total;
+                usedBalance [userSearchIndex] += total;
+                balance [userSearchIndex] -= total;
+                assigning(product,50,psize,"N/A");
                 cout << endl << endl;
                 cout << "            ----------------------------------------THANK YOU FOR YOUR PURCHASE----------------------------------------" << endl;
                 getch();        
@@ -1892,9 +1789,9 @@ void generateBill(cart item[], product grocery[], product snacks[], product othe
         }
         else if (choice == 2)                 // add sales on day wise and add in its activity
         {
-            income.sale[day] = income.sale[day] + total;
-            customer[userSearchIndex].usedBalance += total;
-            initializeCart(item,50,psize,"N/A");
+            sale[day] = sale[day] + total;
+            usedBalance [userSearchIndex] += total;
+            assigning(product,50,psize,"N/A");
             cout << endl << endl;
             cout << "            ----------------------------------------THANK YOU FOR YOUR PURCHASE----------------------------------------" << endl;
             getch();            
@@ -1904,7 +1801,7 @@ void generateBill(cart item[], product grocery[], product snacks[], product othe
             cout << "            --------------------------------------------INVALID INPUT!--------------------------------------------" << endl;
             getch();
         }
-        income.saleOfMonth[month] += totalSales(income.sale); 
+        saleOfMonth[month] += totalSales(sale); 
     }
     
 }
@@ -1922,7 +1819,7 @@ void compareSales(int sale[])
         {
             cout << "*";
         }
-        cout << "  (Rs. " << sale[i] << ")" << endl << endl;
+        cout << "  (Rs. " << sale[i] << ")" << endl;
     }
     cout << "          Rs. " << setw(15) << "";
     for (int i = 0; i <= 50000; i=i+5000)
@@ -2002,39 +1899,40 @@ double totalSales(int sale[])
     return total;
 }
 
-double sort(discount rebate[], int size)
+double sort(double arr1[], double arr2[],double arr3[], int size)
 {
     for (int i = 0; i < size - 1; i++)
     {
         for (int j = 0; j < size - i - 1; j++)
         {
-            if (rebate[i].discountCoupons < rebate[i + 1].discountPercentage)           // sort discount criteria and percentage as they are parllel
+            if (arr1[i] < arr1[i + 1]  && arr1[i + 1] != 0)           // sort discount criteria and percentage as they are parllel
             {
-                swap(rebate[i].discountCoupons,rebate[i + 1].discountCoupons);
-                swap(rebate[i].discountPercentage,rebate[i + 1].discountPercentage);
+                swap(arr1[i],arr1[i + 1]);
+                swap(arr2[i],arr2[i + 1]);
+                swap(arr3[i],arr3[i + 1]);
             }
             
         }
     }
 }
 
-double applyDiscount(int bill ,discount rebate[], int size)
+double applyDiscount(int bill,double criteria[], double percentage[],double maxDiscount[], int size)
 {
     double discount = 0;
     for (int i = 0; i < size; i++)            // apply discount and shows its value
     {
-        if (bill >=  rebate[i].discountCoupons)
+        if (bill >=  criteria[i])
         {
-            discount = bill * (rebate[i].discountPercentage / 100);
-            if (discount <= rebate[i].maxDiscount)
+            discount = bill * (percentage[i] / 100);
+            if (discount <= maxDiscount[i])
             {
                 cout << endl << setw(60) << "" << setw(29) << "Discount :" << "Rs." <<  discount << endl;
                 bill = bill - discount;
             }
             else
             {
-                cout << endl << setw(60) << "" << setw(29) << "Discount :" << "Rs." << rebate[i].maxDiscount << endl;
-                bill = bill - rebate[i].maxDiscount; 
+                cout << endl << setw(60) << "" << setw(29) << "Discount :" << "Rs." <<  maxDiscount << endl;
+                bill = bill - maxDiscount[i]; 
             }
             
             return bill;
@@ -2043,49 +1941,49 @@ double applyDiscount(int bill ,discount rebate[], int size)
     return bill;
 }
 
-void removeStock(cart item[], product grocery[], product snacks[], product other[], int find[][2], int index, int size)
+void removeStock(int quantity[][50], int find[][2], int index, int size)
 {                                           //remove quantity when added to cart
     if (find[index][0] == 1)
     {
-        grocery[find[index][1]].quantity -=  item[userSearchIndex].quantity[index];
+        Gstock[find[index][1]] -=  quantity[userSearchIndex][index];
     }
     if (find[index][0] == 2)
     {
-        snacks[find[index][1]].quantity -=  item[userSearchIndex].quantity[index];
+        Sstock[find[index][1]] -=  quantity[userSearchIndex][index];
     }
     if (find[index][0] == 3)
     {
-        other[find[index][1]].quantity -=  item[userSearchIndex].quantity[index];
+        Ostock[find[index][1]] -=  quantity[userSearchIndex][index];
     }
     return ;
 }
 
-void plusStock(cart item[], product grocery[], product snacks[], product other[], int find[][2], int index, int size)
+void plusStock(int quantity[][50], int find[][2], int index, int size)
 {
     if (find[index][0] == 1)
     {
-        grocery[find[index][1]].quantity +=  item[userSearchIndex].quantity[index];
+        Gstock[find[index][1]] +=  quantity[userSearchIndex][index];
     }
     if (find[index][0] == 2)
     {
-        snacks[find[index][1]].quantity +=  item[userSearchIndex].quantity[index];
+        Sstock[find[index][1]] +=  quantity[userSearchIndex][index];
     }
     if (find[index][0] == 3)
     {
-        other[find[index][1]].quantity +=  item[userSearchIndex].quantity[index];
+        Ostock[find[index][1]] +=  quantity[userSearchIndex][index];
     }
     return ;   
 }
 
-void rechargeCard(user customer[], int size)
+void rechargeCard(string name[], string password[], string bank[], double balance[], int size)
 {
-    string name,key,acountNo;
+    string user,key,acountNo;
     double recharge;
     do{                                                                         // recharge balance when user enter right credentials 
         cout << left;
         cout << setw(35) << endl;
         cout << "               U S E R N A M E                       :       ";
-        getline(cin, name);
+        getline(cin, user);
         cout << setw(35);
         cout << "               P A S S W O R D                       :       ";
         getline(cin, key);
@@ -2094,15 +1992,15 @@ void rechargeCard(user customer[], int size)
         getline(cin, acountNo);
         cout << setw(35) << endl;
     }
-    while (stringValidation(name) || stringValidation(key) || stringValidation(acountNo));
+    while (stringValidation(user) || stringValidation(key) || stringValidation(acountNo));
 
     cout << "               B A L A N C E   T O   R E C H A R G E :        Rs. ";
     cin >> recharge;
-    if (name == customer[userSearchIndex].username
-        && key == customer[userSearchIndex].password
-        && acountNo == customer[userSearchIndex].bank)
+    if (user == name[userSearchIndex]
+        && key == password[userSearchIndex]
+        && acountNo == bank[userSearchIndex])
     {
-        customer[userSearchIndex].balance += recharge;
+        balance[userSearchIndex] += recharge;
     }
     else
     {
@@ -2110,7 +2008,7 @@ void rechargeCard(user customer[], int size)
     }
 }
 
-void validateDate(string date,sales income)
+void validateDate(string date)
 {
     int lenght = date.length();
     if (date >= "01-01-2000" && date <= "31-12-3000"
@@ -2119,12 +2017,12 @@ void validateDate(string date,sales income)
     {
         if (month != stringToInt(date.substr(3,2)) - 1)
         {
-            initializeInt(income.sale,31,0);
+            initializeInt(sale,31,0);
         }
         if (year != stringToInt(date.substr(6,4)))
         {
-            initializeDouble(income.totalOfMonth,12,0);
-            initializeDouble(income.saleOfMonth,12,0);
+            initializeDouble(totalOfMonth,12,0);
+            initializeDouble(saleOfMonth,12,0);
         }
         day =  stringToInt(date.substr(0,2)) - 1;
         month = stringToInt(date.substr(3,2)) - 1;
@@ -2161,30 +2059,30 @@ void graph(double month[])
     cout << "                                               Sales Graph on Monthly Basis                                              \n";
     cout << "***************************************************************************************************************************" << endl;
     cout << endl << endl;
-    cout << "100000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << " 90000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << " 80000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << " 70000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << " 60000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << " 50000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << " 40000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << " 30000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << " 20000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << " 10000_|                                                                                                                                        " << endl;
-    cout << "       |                                                                                                                                        " << endl;
-    cout << "     0-|                                                                                                                                        " << endl;
-    cout << "       _________________________________________________________________________________________________________________________________________" << endl;
-    cout << "       '          '          '          '          '          '          '          '          '          '          '          '          '    " << endl;
-    cout << "                 JAN        FEB        MAR        APR        MAY        JUNE       JULY       AUG        SEP        OCT        NOV        DEC   " << endl << endl;
+    cout << "100000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << " 90000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << " 80000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << " 70000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << " 60000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << " 50000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << " 40000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << " 30000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << " 20000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << " 10000_|                                                                                                                         " << endl;
+    cout << "       |                                                                                                                         " << endl;
+    cout << "     0-|                                                                                                                         " << endl;
+    cout << "       __________________________________________________________________________________________________________________________" << endl;
+    cout << "                '          '          '          '          '          '          '          '          '          '           ' " << endl;
+    
     double x = 9,y = 25;
     double range = 0;
     for (int i = 0; i < 12; i++)
@@ -2217,14 +2115,25 @@ void graph(double month[])
             cout << "(" << month[i] << " , " << i+1 << ")";
         }
     }
-    setCoord(0,32);        // bring cursor back to normal position
+    setCoord(0,28);        // bring cursor back to normal position
+}
+            
+void assigning(string arr[][50], int size, int lenght, string value)
+{                                                                     // initialiaze 2D array
+    for (int i = 0; i < lenght; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            arr[i][j] = value;
+        }
+    }
 }
 
-bool searchUser(string name,user customer[], int size, int index)
+bool searchUser(string user, int size, int index)
 {                                                         // check that same username exist or not
     for (int i = 0; i < size; i++)
     {
-        if (name == customer[i].username && i != index)
+        if (user == username[i] && i != index)
         {
             cout << endl << endl; 
             cout << "            ----------------------------------------USERNAME ALREADY EXIST IN SYSTEM!--------------------------------------------" << endl;
@@ -2234,7 +2143,7 @@ bool searchUser(string name,user customer[], int size, int index)
     return false;
 }
 
-bool loadProducts(product grocery[],product snacks[],product other[], discount rebate[], int size)
+bool loadProducts(string (&grocery)[psize], int (&cost)[psize], int (&sale)[psize], int (&stock)[psize], int size)
 {
     ifstream fin("loadProduct.csv");
     string token;
@@ -2253,7 +2162,7 @@ bool loadProducts(product grocery[],product snacks[],product other[], discount r
         getline(fin, token);
         if (token != "Snacks" && !token.empty())
         {
-            tokenizer(token,grocery,count);
+            tokenizer(token,grocery,cost,sale,stock,count);
             count = count + 1;
         }
     }
@@ -2263,7 +2172,7 @@ bool loadProducts(product grocery[],product snacks[],product other[], discount r
         getline(fin, token);
         if (token != "Other Product" && !token.empty())
         {
-            tokenizer(token,snacks,count);
+            tokenizer(token,snacks,ScostPrice,Sprice,Sstock,count);
             count = count + 1;
         }
     }
@@ -2273,25 +2182,25 @@ bool loadProducts(product grocery[],product snacks[],product other[], discount r
         getline(fin, token);
         if (token != "Discounts" && !token.empty())
         {
-            tokenizer(token,other,count);
+            tokenizer(token,product,OcostPrice,Oprice,Ostock,count);
             count = count + 1;
         }
     }
     count = 0;
     while (!fin.eof())
     {
-        fin >> rebate[count].discountCoupons;
+        fin >> discountCoupons[count];
         fin.ignore();
-        fin >> rebate[count].discountPercentage;
+        fin >> discountPercentage[count];
         fin.ignore();
-        fin >> rebate[count].maxDiscount;
+        fin >> maxDiscount[count];
         fin.ignore();
         count = count + 1;
     }
     fin.close();
 }
 
-bool saveProducts(product grocery[],product snacks[],product other[], discount rebate[], int size)
+bool saveProducts(string (&grocery)[psize], int (&cost)[psize], int (&sale)[psize], int (&stock)[psize], int size)
 {
     ofstream fout("loadProduct.csv");
     fout << day << "-" << month << "-" << year << endl;
@@ -2299,39 +2208,39 @@ bool saveProducts(product grocery[],product snacks[],product other[], discount r
     fout << "Grocery" << endl;
     for (int i = 0; i < size; i++)
     {
-        if (grocery[i].product != "N/A")
+        if (grocery[i] != "N/A")
         {
-            fout << grocery[i].product << "," << grocery[i].cost << "," << grocery[i].sale << "," << grocery[i].quantity << endl;
+            fout << grocery[i] << "," << cost[i] << "," << sale[i] << "," << stock[i] << endl;
         }
     }
     fout << "Snacks" << endl;
     for (int i = 0; i < size; i++)
     {
-        if (snacks[i].product != "N/A")
+        if (snacks[i] != "N/A")
         {
-            fout << snacks[i].product << "," << snacks[i].cost << "," << snacks[i].sale << "," << snacks[i].quantity << endl;
+            fout << snacks[i] << "," << ScostPrice[i] << "," << Sprice[i] << "," << Sstock[i] << endl;
         }
     }
     fout << "Other Product" << endl;
     for (int i = 0; i < size; i++)
     {
-        if (other[i].product != "N/A")
+        if (product[i] != "N/A")
         {
-            fout << other[i].product << "," << other[i].cost << "," << other[i].sale << "," << other[i].quantity << endl;
+            fout << product[i] << "," << OcostPrice[i] << "," << Oprice[i] << "," << Ostock[i] << endl;
         }
     }
     fout << "Discounts" << endl;
     for (int i = 0; i < 15; i++)
     {
-        if (rebate[i].discountCoupons != 0 && rebate[i].discountPercentage != 0)
+        if (discountCoupons[i] != 0 && discountPercentage != 0)
         {
-            fout << rebate[i].discountCoupons << "," << rebate[i].discountPercentage << "," << rebate[i].maxDiscount << endl;
+            fout << discountCoupons[i] << "," << discountPercentage[i] << "," << maxDiscount[i] << endl;
         }
     }
     fout.close();
 }
 
-void loadUser(user customer[], employee detail[])
+void loadUser(string (&username)[psize],string (&passkey)[psize],string (&bank)[psize],double (&balance)[psize],double (&usedBalance)[psize])
 {
     ifstream fin("load_User.csv");
     int count = 0;
@@ -2339,37 +2248,37 @@ void loadUser(user customer[], employee detail[])
     getline(fin,check);
     while(!fin.eof())
     {
-        getline(fin,customer[count].username,',');
-        getline(fin,customer[count].password,',');
-        getline(fin,customer[count].bank,',');
-        fin >> customer[count].balance;
+        getline(fin,username[count],',');
+        getline(fin,passkey[count],',');
+        getline(fin,bank[count],',');
+        fin >> balance[count];
         fin.get();
-        fin >> customer[count].usedBalance;
+        fin >> usedBalance[count];
         fin.ignore();
-        getline (fin,detail[count].employee,',');
-        fin >> detail[count].salary;
+        getline (fin,employee[count],',');
+        fin >> salary[count];
         fin.ignore();
         count += 1;
     }
     fin.close();
 }
 
-void saveUser(user customer[], employee detail[], int size)
+void saveUser(string (&username)[psize],string (&passkey)[psize],string (&bank)[psize],double (&balance)[psize],double (&usedBalance)[psize],int size)
 {
     ofstream fout("load_User.csv");
-    fout << "Username,Password,Account No.,Balance,Used Balance,Employee Name,Salary" << endl;
+    fout << "Username,Password,Account No.,Balance,Employee Name,Salary" << endl;
     for (int i = 0; i < size; i++)
     {
-        if ((customer[i].username != "N/A" && customer[i].username != "") || detail[i].employee != "N/A")
+        if ((username[i] != "N/A" && username[i] != "") || employee[i] != "N/A")
         {
-            fout << customer[i].username << "," << customer[i].password << "," << customer[i].bank << "," << customer[i].balance << "," << customer[i].usedBalance;
-            fout << "," << detail[i].employee << "," << detail[i].salary << endl;
+            fout << username[i] << "," << passkey[i] << "," << bank[i] << "," << balance[i] << "," << usedBalance[i];
+            fout << "," << employee[i] << "," << salary[i] << endl;
         }
     }
     fout.close();
 }
 
-void loadCart(cart item[])
+void loadCart(string (&cart)[psize][50],int (&quantity)[psize][50],int (&price)[psize][50])
 {
     ifstream fin("Load_Cart.csv");
     int index;
@@ -2380,17 +2289,17 @@ void loadCart(cart item[])
     {
         fin >> index;
         fin.ignore();
-        getline(fin,item[index].cart[count],',');
-        fin >> item[index].quantity[count];
+        getline(fin,cart[index][count],',');
+        fin >> quantity[index][count];
         fin.ignore();
-        fin >> item[index].price[count];
+        fin >> price[index][count];
         fin.ignore();
         count += 1; 
     }
     fin.close();
 }
 
-void saveCart(cart item[],int size)
+void saveCart(string (&cart)[psize][50],int (&quantity)[psize][50],int (&price)[psize][50],int size)
 {
     ofstream fout("Load_Cart.csv");
     fout << "Product,Quantity,Price" << endl;
@@ -2398,9 +2307,9 @@ void saveCart(cart item[],int size)
     {
         for (int j = 0; j < 50; j++)
         {
-            if (item[i].cart[j] != "N/A")
+            if (cart[i][j] != "N/A")
             {
-                fout << i << "," << item[i].cart[j] << "," << item[i].quantity[j] << "," << item[i].price[j] << endl;
+                fout << i << "," << cart[i][j] << "," << quantity[i][j] << "," << price[i][j] << endl;
             }
             
         }
@@ -2409,7 +2318,7 @@ void saveCart(cart item[],int size)
     fout.close();
 }
 
-void loadSales(sales income)
+void loadSales(int (&sale)[31],double (&saleOfMonth)[12],double (&totalOfMonth)[12])
 {
     ifstream fin("Sales.csv");
     int day ;
@@ -2419,13 +2328,13 @@ void loadSales(sales income)
     {
         fin >> day;
         fin.ignore();
-        fin >> income.sale[day];
+        fin >> sale[day];
         fin.ignore(); 
         if (day < 12)
         {
-            fin >> income.totalOfMonth[day];
+            fin >> totalOfMonth[day];
             fin.ignore();
-            fin >> income.saleOfMonth[day];
+            fin >> saleOfMonth[day];
             fin.ignore();
         }
         
@@ -2433,24 +2342,24 @@ void loadSales(sales income)
     fin.close();
 }
 
-void saveSales(sales income)
+void saveSales(int (&sale)[31],double (&saleOfMonth)[12],double (&totalOfMonth)[12])
 {
     ofstream fout("Sales.csv");
     fout << "Day,Sales,Monthly Total,Montly Sales" << endl;
     for (int i = 0; i < 31; i++)
     {
         
-        fout << i << "," << income.sale[i] << ",";
+        fout << i << "," << sale[i] << ",";
         if (i < 12)
         {
-            fout << income.totalOfMonth[i] << "," << income.saleOfMonth[i];
+            fout << totalOfMonth[i] << "," << saleOfMonth[i];
         }
         fout << endl;
     }
     fout.close();
 }
 
-void tokenizer(string token,product item[],int index)
+void tokenizer(string token,string (&product)[psize], int (&cost)[psize], int (&sale)[psize], int (&stock)[psize],int index)
 {
     string word[4];
     int arrIndex;
@@ -2464,10 +2373,10 @@ void tokenizer(string token,product item[],int index)
             word[arrIndex] = word[arrIndex] + token[i];
     }
 
-    item[index].product = word[0];
-    item[index].cost = stringToInt(word[1]);
-    item[index].sale = stringToInt(word[2]);
-    item[index].quantity = stringToInt(word[3]);
+    product[index] = word[0];
+    cost[index] = stringToInt(word[1]);
+    sale[index] = stringToInt(word[2]);
+    stock[index] = stringToInt(word[3]);
 }
 
 int stringToInt(string word)
@@ -2486,28 +2395,7 @@ void upper(string& name)
     int size = name.length();
     for (int i = 0; i < size; i++)
     {
-        switch (name[i])
-        {
-        case '_':
-            name[i] = ' ';
-            break;
-        
-        case '-':
-            name[i] = ' ';
-            break;
-        
-        case ',':
-            name[i] = ' ';
-            break;
-        
-        case '.':
-            name[i] = ' ';
-            break;
-        
-        default:
-            name[i] = toupper(name[i]);
-            break;
-        }
+        name[i] = toupper(name[i]);
     }
     return;  
 }

@@ -1,7 +1,12 @@
-0-0-2024
+1-1-2024
 Product Name,Cost Price,Sale Price,Stock
 Grocery
+SUGAR,200,300,-268
+OIL,45,50,100
 Snacks
-ICE CREAM,1111,2222,0
+ICE CREAM,60,90,0
 Other Product
+CHIPS,100,300,0
+SHAMPOO,300,330,78
 Discounts
+10000,10,4000
