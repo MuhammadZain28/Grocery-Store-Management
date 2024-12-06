@@ -10,6 +10,9 @@
 using namespace std;
 
 int const psize = 100;                 // Total No Of Products can be added
+int const cartSize = 50;               // Total No Of Products can be added in customer cart
+const int dsize = 15;                  // Total No of Discounts Can be added
+            
 
 bool validation(int input);                                                                     // check input validation
 void inputDate(string date);                                                                    // input date from user
@@ -25,28 +28,28 @@ void initialize(string arr[], int size, string value);                          
 void assigning(string arr[][50], int size, int lenght, string value);                           // intialize 2D array
 void initializeDouble(double arr[], int size, double value);                                    // double array
 
-double addProduct(string arr1[], int arr2[], int arr3[], int arr4[], int size);                 // take products from admin
-void addEmployee(string arr1[], double arr2[], int size);                                       // admin add employees 
+double addProduct(string product[], int sale[], int cost[], int stock[], int size);             // take products from admin
+void addEmployee(string name[], double salary[], int size);                                     // admin add employees 
 void addCart(string products[][50], int Cartquantity[][50],int price[][50], int size);          // add products in user cart
 
-void displayList(string arr1[], int sale[], int cost[], int stock[], int size);                 // display list of products
-void discountList(double arr1[], double arr2[], int size);                                      // display list of discounts
-void customerList(string arr1[], string arr2[], double arr3[], int size);                       // display list of customers
-void employeeList(string arr1[], double arr2[], int size);                                      // display list of employees
+void displayList(string product[], int sale[], int cost[], int stock[], int size);              // display list of products
+void discountList(double discount[], double percentage[], int size);                            // display list of discounts
+void customerList(string name[], string account[], double balance[], int size);                 // display list of customers
+void employeeList(string name[], double salary[], int size);                                    // display list of employees
 void cartList(string product[][50], int quantity[][50],int price[][50], int size);              // display list of products in cart
-void displayListToCustomer(string arr1[], int sale[], int stock[], int size);                   // display list of products to customer
+void displayListToCustomer(string product[], int sale[], int stock[], int size);                // display list of products to customer
 
 void generateBill(string product[][50], int quantity[][50], int price[][50], int size);         // generate Bill of items in cart
 
-bool productEdit(string arr1[], int arr2[], int arr3[], int arr4[], string edit, int size);     // Admin edits products added 
+bool productEdit(string product[], int sale[], int cost[], int stock[], string edit, int size); // Admin edits products added 
 
-bool searchProduct(string arr1[], int arr2[], int arr3[], string edit, int size);               // search of product
-bool searchCustomer(string arr1[], string arr2[], double arr3[], string edit, int size);        // search of customers
+bool searchProduct(string product[], int sale[], int stock[], string search, int size);                // search of product
+bool searchCustomer(string name[], string account[], double balance[], string search, int size);       // search of customers
 
 bool productDelete(string item[], int price[], int stock[], int costPrice[], string edit, int size);   //     *********************************
-bool discountDelete(double arr1[], double edit, int size);                                             //
-bool employeeDelete(string arr1[], string edit, int size);                                             //      DELETE RESPECTIVE NAME ELEMENTS
-bool customerDelete(string arr1[], string arr2[], double arr3[], string edit, int size);               //
+bool discountDelete(double discount[], double del, int size);                                          //
+bool employeeDelete(string employee[], string del, int size);                                          //      DELETE RESPECTIVE NAME ELEMENTS
+bool customerDelete(string name[], string password[], double arr3[], string del, int size);            //
 bool cartDelete(string product[][50], int quantity[][50], string del, int size);                       //     **********************************                             
 
 void compareSales(int sale[]);                                                                         // Graphically compare sales on daily basis      
@@ -83,9 +86,6 @@ int stringToInt(string word);
 //                                 Functions to load and Store Data in files
 
 
-int const cartSize = 50;               // Total No Of Products can be added in customer cart
-const int dsize = 15;                  // Total No of Discounts Can be added
-            
 int userSearchIndex = 0;               // Searches user in user name array
 int index = 0;                         // Searches Product & its stock
 
@@ -313,21 +313,22 @@ int main()
                     cout << endl;
                     cout << "                    Enter Product You Want to Edit : ";
                     getline(cin, edit);
+                    upper(edit);
 
                     if (editFlag == false)
                     {
-                        editFlag = productEdit(grocery, Gprice, Gstock,GcostPrice, edit, psize);             // if product is not find in 1 array then it goes to next
+                        editFlag = productEdit(grocery, Gprice, GcostPrice, Gstock, edit, psize);             // if product is not find in 1 array then it goes to next
                     }
                     if (editFlag == false)
                     {
-                        editFlag = productEdit(snacks, Sprice, Sstock,ScostPrice, edit, psize);
+                        editFlag = productEdit(snacks, Sprice, ScostPrice, Sstock, edit, psize);
                     }
                     if (editFlag == false)
                     {
-                        editFlag = productEdit(product, Oprice, Ostock,OcostPrice, edit, psize);
+                        editFlag = productEdit(product, Oprice, OcostPrice, Ostock, edit, psize);
                     }
                     else if (editFlag == false)
-                    {
+                    {  
                         cout <<endl << endl;
                         cout << "    -------------------------------------Unable to Find Product------------------------------------- ";
                         cout <<endl << endl;
@@ -351,6 +352,7 @@ int main()
                     cout << endl;
                     cout << "                    Enter Product You Want to Delete : ";
                     getline(cin, edit);
+                    upper(edit);
 
                     if (editFlag == false)
                     {
@@ -405,6 +407,7 @@ int main()
                         getline(cin, edit);
                     }
                     while(stringValidation(edit));
+                    upper(edit);
 
                     if (editFlag == false)
                     {
@@ -441,7 +444,7 @@ int main()
                         {    
                             cout << "                  1.        Set Maximum Discount Price     " << endl;
                             cout << "                  2.        Set Discount Price             " << endl;
-                            cout << "                  0.        Set Discount Price             " << endl;
+                            cout << "                  0.        Exit                           " << endl << endl;
                             cout << "                            Enter Choice  :  ";
                             cin >> check;
                         } 
@@ -450,7 +453,8 @@ int main()
                         if (check == 1)
                         {
                             do
-                            {                                
+                            {
+                                cout <<endl << endl;
                                 cout << "                  Enter Maximum Discount Price  :  ";
                                 cin >> maxDiscount;
                             } 
@@ -484,6 +488,7 @@ int main()
                                 cout << "    ----------------------------------Unable to Store Discount---------------------------------- ";
                                 cout <<endl << endl;
                                 cout << "       ----------------------------------Unsufficient Storage---------------------------------- ";
+                                cout <<endl << endl;
                             }
                             sort(discountCoupons,discountPercentage,dsize);
                             cout << "                  Enter '0' for exit :   ";
@@ -749,8 +754,8 @@ int main()
                     if (editFlag == false)
                     {
                         cout <<endl << endl;
-                        cout << "    ----------------------------------Unable to Find Customer----------------------------------- ";
-                        cout << "    ----------------------------------Does not Exist in System---------------------------------- ";
+                        cout << "    ----------------------------------Unable to Find Customer----------------------------------- " << endl;
+                        cout << "    ----------------------------------Does not Exist in System---------------------------------- " << endl;
                     }
                     getch();
                 }
@@ -770,6 +775,8 @@ int main()
                         getline(cin, edit);
                     }
                     while(stringValidation(edit));
+
+                    upper(edit);
 
                     if (editFlag == false)
                     {
@@ -836,7 +843,7 @@ int main()
                     cout << "                                                     Set Date                                                            \n";
                     cout << "***************************************************************************************************************************" << endl;
                     cout << endl;
-                    cout << "                                   Date :    " << date << endl << endl;
+                    cout << "                                   Date :    " << day << "-" << month << "-" << year << endl << endl;
                     cout << " Enter Date in Format (DD-MM-YYYY)  :  ";
                     do
                     {
@@ -1238,34 +1245,36 @@ void initializeInt(int arr[], int size, int value)
     }
 }
 
-double addProduct(string arr1[], int arr2[], int arr3[], int arr4[], int size)
+double addProduct(string product[], int sale[], int cost[], int stock[], int size)
 {
     double total = 0;
     for (int i = 0; i < psize; i++)
     {
         flag1[1] = true;     // used to find whether item is stored or not
-        if (arr1[i] == "N/A")
+        if (product[i] == "N/A")
         {
             do
             {
                 cout << endl  << "                Enter Product            : ";
-                getline(cin,arr1[i]);
-                upper(arr1[i]);
+                getline(cin,product[i]);
+                upper(product[i]);
                 cout << endl  << "                Enter Cost Price         : ";
-                cin >> arr3[i];
+                cin >> cost[i];
                 cin.ignore(256,'\n');
                 cout << endl  << "                Enter Sale Price         : ";
-                cin >> arr2[i];
+                cin >> sale[i];
                 cin.ignore(256,'\n');
                 cout << endl  << "                Enter Product Stock      : ";
-                cin >> arr4[i];
+                cin >> stock[i];
                 cin.ignore(256,'\n');
+                cout << endl;
             } 
-            while (productValidation(arr2[i],arr3[i],arr4[i]) || stringValidation(arr1[i])); // check validation of input
+            while (productValidation(sale[i],cost[i],stock[i]) || stringValidation(product[i])); // check validation of input
             
-            total += arr3[i]*arr4[i];
+            total += cost[i]*stock[i];
             flag1[1] = false;
-            cout << endl << "                   Product Stored Successfully      " << endl;
+            cout << endl << endl;
+            cout << endl << "  ---------------------------------------Product Stored Successfully---------------------------------------      " << endl;
             break;
         }
     }
@@ -1277,23 +1286,23 @@ double addProduct(string arr1[], int arr2[], int arr3[], int arr4[], int size)
     return total;
 }
 
-void addEmployee(string arr1[], double arr2[], int size)
+void addEmployee(string name[], double salary[], int size)
 {
     for (int i = 0; i < size; i++)
     {
         flag1[1] = true;
-        if (arr1[i] == "N/A")
+        if (name[i] == "N/A")
         {
             do
             {
                 cout << "                Enter Employee Name : ";
-                getline(cin,arr1[i]);
+                getline(cin,name[i]);
                 cout << "                Enter Salary        : ";
-                cin >> arr2[i];
+                cin >> salary[i];
                 cin.ignore(256,'\n');
          
             }
-            while(stringValidation(arr1[i]) || validation(arr2[i]));
+            while(stringValidation(name[i]) || validation(salary[i]));
             
             flag1[1] = false;
             cout << endl << "                            Employee Data Stored Successfully      " << endl;
@@ -1322,72 +1331,78 @@ void addCart(string products[][50], int Cartquantity[][50],int price[][50], int 
             {
                 cout << endl << "                Enter Product : ";
                 getline(cin,add);
-                upper(add);
                 cout << endl << "                Enter Quantity : ";
                 cin >> quantity;
                 cin.ignore(100,'\n');
             } 
             while (stringValidation(add) || validation(quantity));
-                
-
+            upper(add);
             if (searchFlag == false)
             {
                 searchFlag = searchProduct(grocery, Gprice, Gstock, add, psize);
-                if (searchFlag == true && quantity <= Gstock[index])
+                if (searchFlag == true)
                 {
-                    products[userSearchIndex][i] = add;
-                    Cartquantity[userSearchIndex][i] = quantity;
-                    price[userSearchIndex][i] = Gprice[index];
-                    productFind[i][0] = 1;
-                    productFind[i][1] = index;
-                    removeStock(Cartquantity,productFind,i,size);
-                }
-                else if (quantity > Gstock[index])
-                {                        
-                    cout <<endl << endl;
-                    cout << "    -------------------------------------Unable to Store------------------------------------- " ;
-                    cout <<endl << endl;
-                    break;
+                    if (quantity <= Gstock[index])
+                    {
+                        products[userSearchIndex][i] = add;
+                        Cartquantity[userSearchIndex][i] = quantity;
+                        price[userSearchIndex][i] = Gprice[index];
+                        productFind[i][0] = 1;
+                        productFind[i][1] = index;
+                        removeStock(Cartquantity,productFind,i,size);
+                    }
+                    else if (quantity > Gstock[index])
+                    {                        
+                        cout <<endl << endl;
+                        cout << "    -------------------------------------Unable to Store------------------------------------- " ;
+                        cout <<endl << endl;
+                    }
                 }
             }
             if (searchFlag == false)
             {
                 searchFlag = searchProduct(snacks, Sprice, Sstock, add, psize);
-                if (searchFlag == true && quantity <= Sstock[index])
+                if (searchFlag == true)
                 {
-                    products[userSearchIndex][i] = add;
-                    Cartquantity[userSearchIndex][i] = quantity;
-                    price[userSearchIndex][i] = Sprice[index];
-                    productFind[i][0] = 2;
-                    productFind[i][1] = index;
-                    removeStock(Cartquantity,productFind,i,size);
-                }
-                else if (quantity > Sstock[index])
-                {                        
-                    cout <<endl << endl;
-                    cout << "    -------------------------------------Unable to Store------------------------------------- " ;
-                    cout <<endl << endl;
-                    break;
+                    if (quantity <= Sstock[index])
+                    {                        
+                        products[userSearchIndex][i] = add;
+                        Cartquantity[userSearchIndex][i] = quantity;
+                        price[userSearchIndex][i] = Sprice[index];
+                        productFind[i][0] = 2;
+                        productFind[i][1] = index;
+                        removeStock(Cartquantity,productFind,i,size);
+                    }
+                    else if (quantity > Sstock[index])
+                    {                        
+                        cout <<endl << endl;
+                        cout << "    -------------------------------------Unable to Store------------------------------------- " ;
+                        cout <<endl << endl;
+                        break;
+                    }
                 }
             }
             if (searchFlag == false)
             {
                 searchFlag = searchProduct(product, Oprice, Ostock, add, psize);
-                if (searchFlag == true && quantity <= Ostock[index])
+                if (searchFlag == true)
                 {
-                    products[userSearchIndex][i] = add;
-                    Cartquantity[userSearchIndex][i] = quantity;
-                    price[userSearchIndex][i] = Oprice[index];
-                    productFind[i][0] = 3;
-                    productFind[i][1] = index;
-                    removeStock(cartQuantity,productFind,i,size);
-                }
-                else if (quantity > Ostock[index])
-                {                        
-                    cout <<endl << endl;
-                    cout << "    -------------------------------------Unable to Store------------------------------------- " ;
-                    cout <<endl << endl;
-                    break;
+                    if (quantity <= Ostock[index])
+                    {
+                        products[userSearchIndex][i] = add;
+                        Cartquantity[userSearchIndex][i] = quantity;
+                        price[userSearchIndex][i] = Oprice[index];
+                        productFind[i][0] = 3;
+                        productFind[i][1] = index;
+                        removeStock(cartQuantity,productFind,i,size);
+                    }
+                    else if (quantity > Ostock[index])
+                    {                        
+                        cout <<endl << endl;
+                        cout << "    -------------------------------------Unable to Store------------------------------------- " ;
+                        cout <<endl << endl;
+                        break;
+                    }
                 }
             }
             cout << endl << endl;
@@ -1396,27 +1411,27 @@ void addCart(string products[][50], int Cartquantity[][50],int price[][50], int 
             if (searchFlag == false)
             {
                 cout <<endl << endl;
-                cout << "    -------------------------------------Unable to Find Product------------------------------------- " ;
+                cout << "    ---------------------------------------Unable to Find Product--------------------------------------- " ;
                 cout <<endl << endl;
                 break;
             }
 
             flag1[1] = false;
-            cout << endl << "                   Product Stored Successfully      " << endl;
+            cout << endl << "                                   Product Stored Successfully      " << endl;
             break;
         }
     }
 }
 
-void displayList(string arr1[], int sale[], int cost[], int stock[], int size)
+void displayList(string product[], int sale[], int cost[], int stock[], int size)
 {
     cout <<left;
     flag1[4] = true;
     for (int i = 0; i < size; i++)
     {
-        if (arr1[i] != "N/A")
+        if (product[i] != "N/A")
         {
-            cout  << "         " << setw(20) << i+1 << setw(30) << arr1[i] << "Rs." << setw(30) << sale[i] << "Rs." << setw(30) << cost[i] << stock[i] <<endl;
+            cout  << "         " << setw(20) << i+1 << setw(30) << product[i] << "Rs." << setw(30) << sale[i] << "Rs." << setw(30) << cost[i] << setw(4) << stock[i] << "Pcs" <<endl;
             flag1[4] = false;
         }
     }
@@ -1426,15 +1441,15 @@ void displayList(string arr1[], int sale[], int cost[], int stock[], int size)
     }
 }
 
-void displayListToCustomer(string arr1[], int sale[], int stock[], int size)
+void displayListToCustomer(string product[], int sale[], int stock[], int size)
 {
     cout <<left;
     flag1[4] = true;
     for (int i = 0; i < size; i++)
     {
-        if (arr1[i] != "N/A")
+        if (product[i] != "N/A")
         {
-            cout  << "         " << setw(20) << i+1 << setw(30) << arr1[i] << "Rs." << setw(30) << sale[i] << setw(30) << stock[i] <<endl;
+            cout  << "         " << setw(20) << i+1 << setw(30) << product[i] << "Rs." << setw(30) << sale[i] << setw(30) << stock[i] <<endl;
             flag1[4] = false;
         }
     }
@@ -1444,15 +1459,15 @@ void displayListToCustomer(string arr1[], int sale[], int stock[], int size)
     }
 }
 
-void discountList(double arr1[], double arr2[], int size)
+void discountList(double discount[], double percentage[], int size)
 {
     cout <<left;
     bool disFlag = true;
     for (int i = 0; i < size; i++)
     {
-        if (arr1[i] != 0)
+        if (discount[i] != 0)
         {
-            cout  << "         " << setw(30) << i+1 << setw(30) << arr1[i]  << arr2[i] << "%" <<endl;
+            cout  << "         " << setw(30) << i+1 << setw(30) << discount[i]  << percentage[i] << "%" <<endl;
             disFlag = false;
         }
     }
@@ -1490,13 +1505,14 @@ bool productEdit(string item[], int sale[], int cost[], int stock[], string edit
             totalOfMonth[month] -= cost[i]*stock[i];
             
             cout << endl << endl;
-            cout << "          " << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"Stock" <<endl;
+            cout << "          " << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"  Stock" <<endl;
             cout << "***************************************************************************************************************************" << endl <<endl;
             cout << "          " << setw(30) << item[i] << "Rs." << setw(30) << cost[i] << setw(30) << stock[i] <<endl << endl;
             do
             {
                 cout << "                Enter Product            : ";
                 getline(cin,item[i]);
+                upper(item[i]);
                 cout << "                Enter Cost Price         : ";
                 cin >> cost[i];
                 cin.ignore(256,'\n');
@@ -1515,38 +1531,37 @@ bool productEdit(string item[], int sale[], int cost[], int stock[], string edit
     return false;
 }
 
-bool searchProduct(string arr1[], int arr2[], int arr3[], string edit, int size)
+bool searchProduct(string item[], int sale[], int stock[], string search, int size)
 {
     
     for (int i = 0; i < size; i++)
     {
-        if (arr1[i] == edit)
+        if (item[i] == search)
         {
             cout << endl << endl;
             
-            cout << "          " << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"Stock" <<endl;
+            cout << "          " << setw(30) <<"Product" << setw(30) <<"Price" << setw(30) <<"     Stock" <<endl;
             cout << "***************************************************************************************************************************" << endl <<endl;
-            cout << "          " << setw(30) << arr1[i] << "Rs." << setw(30) << arr2[i] << setw(30) << arr3[i] <<endl << endl;
+            cout << "          " << setw(30) << item[i] << "Rs." << setw(30) << sale[i] << setw(5) << stock[i] << "Pcs." <<endl << endl;
             index = i;
-            getch();
             return true;
         }
     }
     return false;
 }
 
-bool searchCustomer(string arr1[], string arr2[], double arr3[], string edit, int size)
+bool searchCustomer(string name[], string account[], double balance[], string search, int size)
 {
     
     for (int i = 0; i < size; i++)
     {
-        if (arr1[i] == edit)
+        if (name[i] == search)
         {
             cout << endl << endl;
             
             cout << "          " << setw(30) <<"Customer Name" << setw(30) <<"Account No." << setw(30) <<"Balance" <<endl;
             cout << "***************************************************************************************************************************" << endl <<endl;
-            cout << "          " << setw(30) << arr1[i]<< setw(30) << arr2[i]  << "Rs." << setw(30) << arr3[i] <<endl << endl;
+            cout << "          " << setw(30) << name[i]<< setw(30) << account[i]  << "Rs." << setw(30) << balance[i] <<endl << endl;
             index = i;
             getch();
             return true;
@@ -1558,7 +1573,7 @@ bool searchCustomer(string arr1[], string arr2[], double arr3[], string edit, in
 bool productDelete(string item[], int price[], int stock[], int costPrice[], string edit, int size)
 {
     int flag = 0;
-    if (searchProduct(item, stock, price, edit, size))
+    if (searchProduct(item, price, stock, edit, size))
     {
         cout << endl << endl;
         cout << "Confirm Delete (1 for Yes / 0 for no) : ";
@@ -1574,19 +1589,19 @@ bool productDelete(string item[], int price[], int stock[], int costPrice[], str
     return false;
 }
 
-bool discountDelete(double arr1[], double edit, int size)
+bool discountDelete(double discount[], double del, int size)
 {
     int flag = 0;
     for (int i = 0; i < size; i++)
     {
-        if (arr1[i] == edit)
+        if (discount[i] == del)
         {
             cout << endl << endl;
             cout << "Confirm Delete (1 for Yes / 0 for no) : ";
             cin >> flag;
             if (flag == 1)
             {
-                arr1[i] = 0 ;
+                discount[i] = 0 ;
                 cout << "";
                 getch();
                 return true;
@@ -1597,19 +1612,19 @@ bool discountDelete(double arr1[], double edit, int size)
     return false;
 }
 
-bool employeeDelete(string arr1[], string edit, int size)
+bool employeeDelete(string name[], string del, int size)
 {
     int flag = 0;
     for (int i = 0; i < size; i++)
     {
-        if (arr1[i] == edit)
+        if (name[i] == del)
         {
             cout << endl << endl;
             cout << "Confirm Delete (1 for Yes / 0 for no) : ";
             cin >> flag;
             if (flag == 1)
             {
-                arr1[i] = "N/A" ;
+                name[i] = "N/A" ;
                 cout << "";
                 getch();
                 return true;
@@ -1620,15 +1635,15 @@ bool employeeDelete(string arr1[], string edit, int size)
     return false;
 }
 
-void customerList(string arr1[], string arr2[], double arr3[], int size)
+void customerList(string name[], string account[], double balance[], int size)
 {
     cout <<left;
     bool disFlag = true;
     for (int i = 0; i < size; i++)
     {
-        if (arr1[i] != "N/A" && arr1[i] != "")
+        if (name[i] != "N/A" && name[i] != "")
         {
-            cout  << "         " << setw(30) << i+1 << setw(30) << arr1[i]  << setw(30) << arr2[i] << "Rs." << arr3[i] <<endl;
+            cout  << "         " << setw(30) << i+1 << setw(30) << name[i]  << setw(30) << account[i] << "Rs." << balance[i] <<endl;
             disFlag = false;
         }
     }
@@ -1638,15 +1653,15 @@ void customerList(string arr1[], string arr2[], double arr3[], int size)
     }
 }
 
-void employeeList(string arr1[], double arr2[], int size)
+void employeeList(string name[], double salary[], int size)
 {
     cout <<left;
     bool disFlag = true;
     for (int i = 0; i < size; i++)
     {
-        if (arr1[i] != "N/A")
+        if (name[i] != "N/A")
         {
-            cout  << "         " << setw(20) << i+1 << setw(50) << arr1[i] << "Rs." << arr2[i] <<endl;
+            cout  << "         " << setw(20) << i+1 << setw(50) << name[i] << "Rs." << salary[i] <<endl;
             disFlag = false;
         }
     }
@@ -1656,17 +1671,17 @@ void employeeList(string arr1[], double arr2[], int size)
     }
 }
 
-bool customerDelete(string arr1[], string arr2[], double arr3[], string edit, int size)
+bool customerDelete(string name[], string account[], double balance[], string del, int size)
 {
     int flag = 0;
-    if (searchCustomer(arr1, arr2, arr3, edit, size))
+    if (searchCustomer(name, account, balance, del, size))
     {
         cout << endl << endl;
         cout << "Confirm Delete (1 for Yes / 0 for no) : ";
         cin >> flag;
         if (flag == 1)
         {
-            arr1[userSearchIndex] = "N/A" ;
+            name[userSearchIndex] = "N/A" ;
             cout << "            -------------------------------------Customer Data Deleted.-------------------------------------" << endl;
             return true;
         }
@@ -1801,7 +1816,7 @@ void compareSales(int sale[])
         {
             cout << "*";
         }
-        cout << "  (Rs. " << sale[i] << ")" << endl;
+        cout << "  (Rs. " << sale[i] << ")" << endl << endl;
     }
     cout << "          Rs. " << setw(15) << "";
     for (int i = 0; i <= 50000; i=i+5000)
@@ -2040,30 +2055,30 @@ void graph(double month[])
     cout << "                                               Sales Graph on Monthly Basis                                              \n";
     cout << "***************************************************************************************************************************" << endl;
     cout << endl << endl;
-    cout << "100000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << " 90000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << " 80000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << " 70000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << " 60000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << " 50000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << " 40000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << " 30000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << " 20000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << " 10000_|                                                                                                                         " << endl;
-    cout << "       |                                                                                                                         " << endl;
-    cout << "     0-|                                                                                                                         " << endl;
-    cout << "       __________________________________________________________________________________________________________________________" << endl;
-    cout << "                '          '          '          '          '          '          '          '          '          '           ' " << endl;
-    
+    cout << "100000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << " 90000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << " 80000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << " 70000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << " 60000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << " 50000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << " 40000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << " 30000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << " 20000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << " 10000_|                                                                                                                                        " << endl;
+    cout << "       |                                                                                                                                        " << endl;
+    cout << "     0-|                                                                                                                                        " << endl;
+    cout << "       _________________________________________________________________________________________________________________________________________" << endl;
+    cout << "       '          '          '          '          '          '          '          '          '          '          '          '          '    " << endl;
+    cout << "                 JAN        FEB        MAR        APR        MAY        JUNE       JULY       AUG        SEP        OCT        NOV        DEC   " << endl << endl;
     double x = 9,y = 25;
     double range = 0;
     for (int i = 0; i < 12; i++)
@@ -2096,7 +2111,7 @@ void graph(double month[])
             cout << "(" << month[i] << " , " << i+1 << ")";
         }
     }
-    setCoord(0,28);        // bring cursor back to normal position
+    setCoord(0,32);        // bring cursor back to normal position
 }
             
 void assigning(string arr[][50], int size, int lenght, string value)
@@ -2376,7 +2391,28 @@ void upper(string& name)
     int size = name.length();
     for (int i = 0; i < size; i++)
     {
-        name[i] = toupper(name[i]);
+        switch (name[i])
+        {
+        case '_':
+            name[i] = ' ';
+            break;
+        
+        case '-':
+            name[i] = ' ';
+            break;
+        
+        case ',':
+            name[i] = ' ';
+            break;
+        
+        case '.':
+            name[i] = ' ';
+            break;
+        
+        default:
+            name[i] = toupper(name[i]);
+            break;
+        }
     }
     return;  
 }
